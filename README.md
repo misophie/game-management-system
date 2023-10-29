@@ -1,2 +1,2 @@
-# project_c2e1k_o4k7x_x3v7f
+# Game Platform Management System
 Our project involves designing a database to represent a system that manages games of various types, tracks player statistics, supports player profiles, and leaderboard tracking for each game. We are aiming to model how a company might want to handle and track data related to the games they provide and the players that play them. For example, game platforms such as Steam that host different amounts of games, and players can access it all in one place.
