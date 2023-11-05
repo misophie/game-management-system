@@ -33,10 +33,10 @@ const Title = styled.h2`
   text-align: center;
 `;
 
-export const LeaderboardComponent = () => {
+export const LeaderboardComponent = ({title}) => {
     return(
         <TableContainer>
-        <Title>All Game Rankings</Title>
+        <Title>{title}</Title>
         <TableRow>
             <GameColumn>Game 1</GameColumn>
             <RankColumn>Rank 1</RankColumn>

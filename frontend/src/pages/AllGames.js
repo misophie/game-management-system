@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import DummyImage from "../images/300.png";
 
@@ -31,12 +32,16 @@ const GameImageContainer = styled.div`
     flex-direction: column;
     cursor: pointer;
 `
-const GameTitle = ({title, img}) => {
+// true = multiplayer
+// false = single-player game
+const GameTitle = ({title, img, gameType = false}) => {
     return(
-        <GameImageContainer>
+        <Link to={gameType ? "/multi-player-game" : "/single-player-game"}>
+          <GameImageContainer>
             <GameImage src={DummyImage} alt="this is a dog" />
             <Title>{title}</Title>
         </GameImageContainer>
+        </Link>
     )
 }
 
@@ -44,16 +49,17 @@ export const AllGames = () => {
     return(
     <PageContainer>
             <AllGameContainer>
-            <GameTitle title={"Genshin Impact"}/>
+            <GameTitle title={"Genshin Impact"} gameType={true}/>
             <GameTitle title={"Maple Story"}/>
-            <GameTitle title={"Genshin Impact"}/>
-            <GameTitle title={"Genshin Impact"}/>
-            <GameTitle title={"Genshin Impact"}/>
-            <GameTitle title={"Genshin Impact"}/>
-            <GameTitle title={"Genshin Impact"}/>
-            <GameTitle title={"Genshin Impact"}/>
-            <GameTitle title={"Genshin Impact"}/>
-            <GameTitle title={"Genshin Impact"}/>
+            <GameTitle title={"Genshin Impact"} gameType={true}/>
+            <GameTitle title={"Genshin Impact"} gameType={true}/>
+            <GameTitle title={"Genshin Impact"} gameType={true}/>
+            <GameTitle title={"Genshin Impact"} gameType={true}/>
+            <GameTitle title={"Genshin Impact"} gameType={true}/>
+            <GameTitle title={"Genshin Impact"} gameType={true}/>
+            <GameTitle title={"Genshin Impact"} gameType={true}/>
+            <GameTitle title={"Genshin Impact"} gameType={true}/>
+            <GameTitle title={"Genshin Impact"} gameType={true}/>        
         </AllGameContainer>
     </PageContainer>
         
