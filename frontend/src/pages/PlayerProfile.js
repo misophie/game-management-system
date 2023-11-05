@@ -81,7 +81,7 @@ export const PlayerProfile = () => {
         <PlayerContainer>
             <AvatarLeaderboardContainer>
             <PlayerAvatar src={DummyImage} alt="this is a dog" />
-            <LeaderboardComponent />
+            <LeaderboardComponent title={"All Game Ranking"} />
             </AvatarLeaderboardContainer>
 
             <PlayerDescription>
