@@ -31,8 +31,9 @@ export const NavigationBar = () => {
   return (
     <NavBar>
       <NavItem href="/games">Games</NavItem>
-      <AppName>Game Platform Manager</AppName>
       <NavItem href="/">Player Profile</NavItem>
+      <NavItem href="/sign-up-page">Sign Up</NavItem>
+      <AppName>Game Platform Manager</AppName>
     </NavBar>
   );
 };
