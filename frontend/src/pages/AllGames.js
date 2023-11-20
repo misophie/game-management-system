@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import DummyImage from "../images/300.png";
+import axios from "axios";
 
 const PageContainer = styled.div`
   display: flex;
@@ -46,20 +47,28 @@ const GameTitle = ({title, img, gameType = false}) => {
 }
 
 export const AllGames = () => {
+    const [data, setData] = useState('');
+
+    useEffect(() => {
+        // Fetch data from Express backend
+        axios.get('http://localhost:65535/games')
+          .then(response => setData(response.data["data"]))
+          .catch(error => console.error('Error fetching data:', error));
+          console.log(data["data"]);
+      }, []);
+
+
+    
     return(
     <PageContainer>
             <AllGameContainer>
-            <GameTitle title={"Genshin Impact"} gameType={true}/>
-            <GameTitle title={"Maple Story"}/>
-            <GameTitle title={"Genshin Impact"} gameType={true}/>
-            <GameTitle title={"Genshin Impact"} gameType={true}/>
-            <GameTitle title={"Genshin Impact"} gameType={true}/>
-            <GameTitle title={"Genshin Impact"} gameType={true}/>
-            <GameTitle title={"Genshin Impact"} gameType={true}/>
-            <GameTitle title={"Genshin Impact"} gameType={true}/>
-            <GameTitle title={"Genshin Impact"} gameType={true}/>
-            <GameTitle title={"Genshin Impact"} gameType={true}/>
-            <GameTitle title={"Genshin Impact"} gameType={true}/>        
+            {Array.isArray(data) ? (
+            data.map(game => (
+                <GameTitle key={game.id} title={game.title} gameType={game.type} />
+            ))
+            ) : (
+            <p>Loading...</p>
+            )}      
         </AllGameContainer>
     </PageContainer>
         
