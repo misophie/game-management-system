@@ -7,9 +7,9 @@ const envVariables = loadEnvFile('./.env');
 
 // Database configuration setup. Ensure your .env file has the required database credentials.
 const dbConfig = {
-    user: envVariables.ORACLE_USER,
-    password: envVariables.ORACLE_PASS,
-    connectString: `${envVariables.ORACLE_HOST}:${envVariables.ORACLE_PORT}/${envVariables.ORACLE_DBNAME}`
+    user: "ora_sophsong",
+    password: "a48161814",
+    connectString: "dbhost.students.cs.ubc.ca:1522/stu"
 };
 
 
