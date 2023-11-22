@@ -1,0 +1,309 @@
+Skip to content
+ Enterprise
+Search or jump to…
+Pull requests
+Issues
+Explore
+ 
+@audreyt2 
+CPSC304-2023W-T1
+/
+project_c2e1k_o4k7x_x3v7f
+Private
+Cannot fork because forking is disabled.
+Code
+Issues
+Pull requests
+Projects
+Security
+Insights
+project_c2e1k_o4k7x_x3v7f/backend/old./s1
+@audreyt2
+audreyt2 Move s1.sql to old
+Latest commit b98852f now
+ History
+ 1 contributor
+282 lines (232 sloc)  12.2 KB
+ 
+
+-- Drop existing tables
+
+drop table LeaderboardStatistic;
+drop table Friend;
+drop table GamePlayer;
+drop table TeamPlayer;
+drop table GameTeam;
+drop table CompanyGame;
+drop table Team;
+drop table Statistic;
+drop table Company;
+drop table Leaderboard;
+drop table MultiplayerGame;
+drop table SinglePlayerGame;
+drop table Game;
+drop table Publisher;
+
+
+-- Create tables
+
+-- ENTITIES
+create table Publisher (
+    publisherID int primary key,
+    publisherName varchar (20)
+);
+
+-- Total participation, 1-1 relationship with Leaderboard
+create table Game (
+    gameID int primary key,
+    title varchar (50) not null,
+    genre varchar (20),
+    ageRestriction varchar (20),
+    releaseDate date,
+    platform varchar (20),
+    publisherID int,
+    foreign key (publisherID) references Publisher ON DELETE SET NULL
+);
+
+-- ISA Game
+create table SinglePlayerGame (
+    gameID int primary key,
+    difficulty int,
+    foreign key (gameID) references Game ON DELETE CASCADE
+);
+
+-- ISA Game
+create table MultiplayerGame (
+    gameID int primary key,
+    serverRegion varchar (20),
+    voiceChatProvider varchar (20),
+    foreign key (gameID) references Game ON DELETE CASCADE
+);
+
+create table Leaderboard (
+    leaderboardID int primary key,
+    visibility number (1, 0),
+    timeFrame varchar (50),
+    gameID int unique,
+    foreign key (gameID) references Game ON DELETE CASCADE
+);
+
+create table Company (
+    companyID int primary key,
+    companyName varchar (20) not null,
+    hqCity varchar (20)
+);
+
+create table Player (
+    playerID int primary key,
+    playerEmail varchar (30) not null unique,
+    dateOfBirth date,
+    rank int,
+    avatar varchar (50),
+    bio varchar (50)
+);
+
+create table Statistic (
+    playerID int,
+    rank int,
+    score int,
+    primary key (playerID, rank),
+    foreign key (playerID) references Player ON DELETE SET NULL
+);
+
+create table Team (
+    teamID int primary key,
+    creationDate date
+);
+
+-- RELATIONSHIPS
+
+-- (Company) many-to-many (Game)
+create table CompanyGame (
+    companyID int,
+    gameID int,
+    primary key (companyID, gameID),
+    foreign key (companyID) references Company,
+    foreign key (gameID) references Game
+);
+
+-- (Leaderboard) many-to-many (Statistic)
+create table LeaderboardStatistic (
+    leaderboardID int,
+    playerID int,
+    rank int,
+    primary key (leaderboardID, playerID, rank),
+    foreign key (leaderboardID) references Leaderboard,
+    foreign key (playerID, rank) references Statistic
+);
+
+-- (MultiplayerGame) many-to-many (Team)
+create table GameTeam (
+    gameID int,
+    teamID int,
+    primary key (gameID, teamID),
+    foreign key (gameID) references MultiplayerGame,
+    foreign key (teamID) references Team
+);
+
+-- (Team) many-to-many (Player)
+create table TeamPlayer (
+    playerID int,
+    teamID int,
+    primary key (playerID, teamID),
+    foreign key (playerID) references Player,
+    foreign key (teamID) references Team
+);
+
+-- (Game) many-to-many (Player)
+create table GamePlayer (
+    playerID int,
+    gameID int,
+    primary key (playerID, gameID),
+    foreign key (playerID) references Player,
+    foreign key (gameID) references Game
+);
+
+-- (Player) many-to-many (Player)
+create table Friend (
+    playerID1 int,
+    playerID2 int,
+    primary key (playerID1, playerID2),
+    foreign key (playerID1) references Player,
+    foreign key (playerID2) references Player
+);
+
+-- Insert tuples into tables
+
+insert into Publisher (publisherID, publisherName) values (1, 'Ink Splatter Press');
+insert into Publisher (publisherID, publisherName) values (2, 'Game Publishers');
+insert into Publisher (publisherID, publisherName) values (3, 'Wonderful Whimsy');
+insert into Publisher (publisherID, publisherName) values (4, 'Reach for the Stars');
+insert into Publisher (publisherID, publisherName) values (5, 'Midnight Flourish');
+
+
+insert into Game (gameID, title, genre, ageRestriction, releaseDate, platform, publisherID) 
+values (1, 'Maple Story', 'RPG', 'E', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'iOS', 1);
+insert into Game (gameID, title, genre, ageRestriction, releaseDate, platform, publisherID) 
+values (2, 'League of Legends', 'MOBA', 'PG13', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'Microsoft Windows', 1);
+insert into Game (gameID, title, genre, ageRestriction, releaseDate, platform, publisherID) 
+values (3, 'Valorant', 'Shooter', 'PG13', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'Microsoft Windows', 2);
+insert into Game (gameID, title, genre, ageRestriction, releaseDate, platform, publisherID) 
+values (4, 'TeamFight Tactics', 'Auto Chess', 'E', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'Microsoft Windows', 2);
+insert into Game (gameID, title, genre, ageRestriction, releaseDate, platform, publisherID) 
+values (5, 'Genshin Impact', 'Action RPG', 'PG13', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'Microsoft Windows', 3);
+insert into Game (gameID, title, genre, ageRestriction, releaseDate, platform, publisherID) 
+values (6, 'The Witcher 3: Wild Hunt', 'RPG', 'PG13', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'PC', 3);
+insert into Game (gameID, title, genre, ageRestriction, releaseDate, platform, publisherID) 
+values (7, 'Assassins Creed Valhalla', 'Action-Adventure', 'R', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'Xbox', 4);
+insert into Game (gameID, title, genre, ageRestriction, releaseDate, platform, publisherID) 
+values (8, 'The Legend of Zelda: Breath of the Wild', 'Action-Adventure', 'PG13', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'Nintendo Switch', 4);
+insert into Game (gameID, title, genre, ageRestriction, releaseDate, platform, publisherID) 
+values (9, 'Cyberpunk 2077', 'RPG', 'R', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'PC', 5);
+insert into Game (gameID, title, genre, ageRestriction, releaseDate, platform, publisherID) 
+values (10, 'Red Dead Redemption 2', 'Action-Adventure', 'R', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'PlayStation', 5);
+
+
+insert into SinglePlayerGame (gameID, difficulty) values (6,  6);
+insert into SinglePlayerGame (gameID, difficulty) values (7,  8);
+insert into SinglePlayerGame (gameID, difficulty) values (8, 10);
+insert into SinglePlayerGame (gameID, difficulty) values (9, 9);
+insert into SinglePlayerGame (gameID, difficulty) values (10, 3);
+
+
+insert into MultiplayerGame (gameID, serverRegion, voiceChatProvider) values (1, 'America-1001', 'Voices');
+insert into MultiplayerGame (gameID, serverRegion, voiceChatProvider) values (2, 'America-1002', 'VoicePro');
+insert into MultiplayerGame (gameID, serverRegion, voiceChatProvider) values (3, 'America-1003', 'TeamSpeak');
+insert into MultiplayerGame (gameID, serverRegion, voiceChatProvider) values (4, 'America-1006', 'Noise');
+insert into MultiplayerGame (gameID, serverRegion, voiceChatProvider) values (5, 'America-1005',  'Mumble');
+
+
+insert into Leaderboard (leaderboardID, visibility, timeFrame, gameID) values (1, 1, '2023-10-12 - 2023-10-19', 1);
+insert into Leaderboard (leaderboardID, visibility, timeFrame, gameID) values (2, 1, '2023-10-12 - 2023-10-19', 2);
+insert into Leaderboard (leaderboardID, visibility, timeFrame, gameID) values (3, 1, '2023-10-12 - 2023-10-19', 3);
+insert into Leaderboard (leaderboardID, visibility, timeFrame, gameID) values (4, 0, '2023-10-12 - 2023-10-19', 4);
+insert into Leaderboard (leaderboardID, visibility, timeFrame, gameID) values (5, 1, '2023-10-12 - 2023-10-19', 5);
+insert into Leaderboard (leaderboardID, visibility, timeFrame, gameID) values (6, 1, '2023-10-12 - 2023-10-19', 6);
+insert into Leaderboard (leaderboardID, visibility, timeFrame, gameID) values (7, 1, '2023-10-12 - 2023-10-19', 7);
+insert into Leaderboard (leaderboardID, visibility, timeFrame, gameID) values (8, 1, '2023-10-12 - 2023-10-19', 8);
+insert into Leaderboard (leaderboardID, visibility, timeFrame, gameID) values (9, 0, '2023-10-12 - 2023-10-19', 9);
+insert into Leaderboard (leaderboardID, visibility, timeFrame, gameID) values (10, 1, '2023-10-12 - 2023-10-19', 10);
+
+
+insert into Company (companyID, companyName, hqCity) values (1, 'Awesome Games', 'Calgary');
+insert into Company (companyID, companyName, hqCity) values (2, 'Cool Games', 'Vancouver');
+insert into Company (companyID, companyName, hqCity) values (3, 'Machine Games', 'Toronto');
+insert into Company (companyID, companyName, hqCity) values (4, 'Riot', 'LA');
+insert into Company (companyID, companyName, hqCity) values (5, 'Blizzard', 'NYC');
+
+
+insert into Player (playerID, playerEmail, dateOfBirth, rank, avatar, bio) values (1, 'grace@gmail.com', TO_DATE ('10-OCT-2002', 'DD-MM-YYYY'), 1, '/path/to/avatar1.jpg', 'Gamer, explorer, and thrill-seeker.');
+insert into Player (playerID, playerEmail, dateOfBirth, rank, avatar, bio) values (2, 'sophie@gmail.com', TO_DATE ('23-OCT-2002', 'DD-MM-YYYY'), 2, '/path/to/avatar2.jpg', 'Casual gamer');
+insert into Player (playerID, playerEmail, dateOfBirth, rank, avatar, bio) values (3, 'audrey@gmail.com', TO_DATE ('20-NOV-2003', 'DD-MM-YYYY'), 3, '/path/to/avatar3.jpg', 'competitive.');
+insert into Player (playerID, playerEmail, dateOfBirth, rank, avatar, bio) values (4, 'jane@gmail.com', TO_DATE ('30-APR-2003', 'DD-MM-YYYY'), 4, '/path/to/avatar4.jpg', 'live laugh love.');
+insert into Player (playerID, playerEmail, dateOfBirth, rank, avatar, bio) values (5, 'sam@gmail.com', TO_DATE ('10-MAY-2003', 'DD-MM-YYYY'), 5, '/path/to/avatar5.jpg', 'i will win');
+
+
+insert into Statistic (playerID, rank, score) values (1, 200, 49988);
+insert into Statistic (playerID, rank, score) values (2, 7, 2020204);
+insert into Statistic (playerID, rank, score) values (3, 1, 8000878);
+insert into Statistic (playerID, rank, score) values (4, 20, 4482748);
+insert into Statistic (playerID, rank, score) values (5, 9000, 434);
+
+
+insert into Team (teamID, creationDate) values (1, TO_DATE ('10-MAY-2003', 'DD-MM-YYYY'));
+insert into Team (teamID, creationDate) values (2, TO_DATE ('7-JUN-2018', 'DD-MM-YYYY'));
+insert into Team (teamID, creationDate) values (3, TO_DATE ('14-JAN-2021', 'DD-MM-YYYY'));
+insert into Team (teamID, creationDate) values (4, TO_DATE ('13-DEC-2022', 'DD-MM-YYYY'));
+insert into Team (teamID, creationDate) values (5, TO_DATE ('10-MAY-2013', 'DD-MM-YYYY'));
+
+
+insert into CompanyGame (companyID, gameID) values (1, 1);
+insert into CompanyGame (companyID, gameID) values (1, 2);
+insert into CompanyGame (companyID, gameID) values (2, 3);
+insert into CompanyGame (companyID, gameID) values (2, 4);
+insert into CompanyGame (companyID, gameID) values (3, 5);
+insert into CompanyGame (companyID, gameID) values (3, 6);
+insert into CompanyGame (companyID, gameID) values (4, 7);
+insert into CompanyGame (companyID, gameID) values (4, 8);
+insert into CompanyGame (companyID, gameID) values (5, 9);
+insert into CompanyGame (companyID, gameID) values (5, 10);
+
+
+insert into LeaderboardStatistic (leaderboardID, playerID, rank) values (1, 1, 200);
+insert into LeaderboardStatistic (leaderboardID, playerID, rank) values (2, 2, 7);
+insert into LeaderboardStatistic (leaderboardID, playerID, rank) values (3, 3, 1);
+insert into LeaderboardStatistic (leaderboardID, playerID, rank) values (4, 4, 20);
+insert into LeaderboardStatistic (leaderboardID, playerID, rank) values (5, 5, 9000);
+
+
+insert into GameTeam (gameID, teamID) values (1, 1);
+insert into GameTeam (gameID, teamID) values (1, 2);
+insert into GameTeam (gameID, teamID) values (2, 3);
+insert into GameTeam (gameID, teamID) values (2, 4);
+insert into GameTeam (gameID, teamID) values (2, 5);
+
+
+insert into TeamPlayer (playerID, teamID) values (1, 1);
+insert into TeamPlayer (playerID, teamID) values (2, 1);
+insert into TeamPlayer (playerID, teamID) values (1, 2);
+insert into TeamPlayer (playerID, teamID) values (2, 2);
+insert into TeamPlayer (playerID, teamID) values (3, 3);
+insert into TeamPlayer (playerID, teamID) values (3, 4);
+insert into TeamPlayer (playerID, teamID) values (4, 4);
+insert into TeamPlayer (playerID, teamID) values (5, 4);
+insert into TeamPlayer (playerID, teamID) values (1, 5);
+insert into TeamPlayer (playerID, teamID) values (3, 5);
+
+
+insert into GamePlayer (playerID, gameID) values (1, 1);
+insert into GamePlayer (playerID, gameID) values (2, 1);
+insert into GamePlayer (playerID, gameID) values (3, 1);
+insert into GamePlayer (playerID, gameID) values (4, 1);
+insert into GamePlayer (playerID, gameID) values (5, 1);
+
+
+insert into Friend (playerID1, playerID2) values (1, 2);
+insert into Friend (playerID1, playerID2) values (2, 3);
+insert into Friend (playerID1, playerID2) values (3, 4);
+insert into Friend (playerID1, playerID2) values (4, 5);
+insert into Friend (playerID1, playerID2) values (5, 3);
