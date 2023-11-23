@@ -8,8 +8,9 @@ const cors = require('cors');
 const loadEnvFile = require('./utils/envUtil');
 const envVariables = loadEnvFile('./.env');
 
+// explicitly named port
 const app = express();
-const PORT = envVariables.PORT || 65534;  // Adjust the PORT if needed (e.g., if you encounter a "port already occupied" error)
+const PORT = 55001 || 65534;  // Adjust the PORT if needed (e.g., if you encounter a "port already occupied" error)
 
 // Middleware setup
 app.use(express.static('public'));  // Serve static files from the 'public' directory

@@ -10,7 +10,6 @@ const dbConfig = {
   user: envVariables.ORACLE_USER,
   password: envVariables.ORACLE_PASS,
   connectString: `${envVariables.ORACLE_HOST}:${envVariables.ORACLE_PORT}/${envVariables.ORACLE_DBNAME}`,
-
 };
 
 // ----------------------------------------------------------
@@ -46,20 +45,26 @@ async function testOracleConnection() {
 }
 
 async function fetchAllGamesFromDb() {
-  return await withOracleDB(async (connection) => {
-    const result = await connection.execute("SELECT * FROM Game");
-    const rows = result.rows;
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(`SELECT * FROM Game`);
+        const rows = result.rows;
 
-    const gameData = rows.map((row) => {
-      return {
-        gameId: row[0],
-        title: row[1],
-        genre: row[2],
-        ageRestriction: row[3],
-        releaseDate: row[4],
-        platform: row[5],
-        leaderboardID: row[6],
-      };
+        const gameData = rows.map(row => {
+            return {
+                gameId: row[0],
+                title: row[1],
+                genre: row[2],
+                ageRestriction: row[3],
+                releaseDate: row[4],
+                platform: row[5],
+                leaderboardID: row[6]
+            };
+        });
+
+        return gameData;
+        // return rows;
+    }).catch(() => {
+        return [];
     });
 
     return gameData;
@@ -108,22 +113,53 @@ async function updateNameDemotable(oldName, newName) {
   });
 }
 
-async function countDemotable() {
-  return await withOracleDB(async (connection) => {
-    const result = await connection.execute("SELECT Count(*) FROM DEMOTABLE");
-    return result.rows[0][0];
-  }).catch(() => {
-    return -1;
-  });
+async function countGamestable() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT Count(*) FROM Game');
+        return result.rows[0][0];
+    }).catch(() => {
+        return -1;
+    });
+}
+
+async function getAllPublishersGames() {
+    return await withOracleDB(async(connection) => {
+        const result = await connection.execute('SELECT pb.PublisherID, pb.publisherName, g.GameID, Title, Genre, releaseDate, platform FROM publisher pb, publishes p, game g WHERE pb.publisherID = p.publisherID AND g.gameID = p.gameID')
+        const rows = result.rows;
+        // console.log(rows);
+        const publisherGameData = rows.map(row => {
+            return {
+                publisherId: row[0],
+                publisherName: row[1],
+                gameId: row[2],
+                title: row[3],
+                genre: row[4],
+                releaseDate: row[5],
+                platform: row[6]
+            };
+        });
+        return publisherGameData;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function countPublishersWithGamestable() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(`SELECT count(*) FROM publisher pb, publishes p, game g WHERE pb.publisherID = p.publisherID AND g.gameID = p.gameID`);
+        return result.rows[0][0];
+    }).catch(() => {
+        return -1;
+    });
 }
 
 module.exports = {
-  testOracleConnection,
-  fetchAllGamesFromDb,
-  getGamePublisher,
-  // insertNewUser,
-  // initiateDemotable,
-  // insertDemotable,
-  // updateNameDemotable,
-  // countDemotable
+    testOracleConnection,
+    fetchAllGamesFromDb,   
+    // initiateDemotable, 
+    // insertDemotable, 
+    // updateNameDemotable, 
+    countGamestable,
+    getAllPublishersGames,
+    countPublishersWithGamestable
 };
