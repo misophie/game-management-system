@@ -66,12 +66,7 @@ async function fetchAllGamesFromDb() {
     }).catch(() => {
         return [];
     });
-
-    return gameData;
-  }).catch(() => {
-    return [];
-  });
-}
+  };
 
 async function getGamePublisher() {
   return await withOracleDB(async (connection) => {
