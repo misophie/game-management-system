@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useLocation } from 'react-router-dom';
 import styled from "styled-components";
 import DummyImage from "../images/300.png";
 import { LeaderboardComponent } from "../components/LeaderboardComponent";
+import axios from "axios";
 
 const GameContainer = styled.div`
   display: flex;
@@ -11,13 +13,13 @@ const GameContainer = styled.div`
   width: 100%;
   justify-content: center; 
   gap: 10%;
-  padding-top: 10%;
+  padding-top: 5%;
 `;
 
 const AvatarLeaderboardContainer = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 10%;
+    gap: 5%;
 `
 
 const GameDescription = styled.div`
@@ -31,8 +33,15 @@ const PlayerAvatar = styled.img`
     height: 300px;
 `
 const Text = styled.text`
-    font-size: 16px;
+    font-size: 24px;
     color: #333;
+    font-weight: bold;
+`
+
+const Heading = styled.text`
+    color: #333;
+    font-size: 32px;
+    text-align: center;
     font-weight: bold;
 `
 const PlayButton = styled.button`
@@ -47,9 +56,48 @@ const PlayButton = styled.button`
 `
 
 export const SinglePlayerGame = () => {
+    const location = useLocation();
+    const data = location.state;
+    const [developerData, setDeveloperData] = useState('');
+    const [publisherData, setPublisherData] = useState('');
+
+
+    console.log(data)
+
+    const { key, title, type, date, publisher } = data;
+
+    console.log(data);
+
+    useEffect(() => {
+        // Fetch data from Express backend
+        axios.get('http://localhost:65535/developer-company')
+            .then(response => setDeveloperData(response.data["data"]))
+            .catch(error => console.error('Error fetching data:', error));
+        }, []);
+
+    useEffect(() => {
+        // Fetch data from Express backend
+        axios.get('http://localhost:65535/publishers')
+            .then(response => setPublisherData(response.data["data"]))
+            .catch(error => console.error('Error fetching data:', error));
+        }, []);
+
+    const getPublisher = (id) => {
+        var newPublisherData = Object.values(publisherData)
+
+        const matchingEntry = newPublisherData.find(entry => entry[0] === id);
+        console.log(matchingEntry ? matchingEntry[1] : null);
+
+        return matchingEntry ? matchingEntry[1] : "Null";
+    }
+
+
     return(
         <GameContainer>
             <AvatarLeaderboardContainer>
+            <Heading>
+                {title}
+            </Heading>
             <PlayerAvatar src={DummyImage} alt="this is a dog" />
             <LeaderboardComponent title={"Leaderboard"}/>
             </AvatarLeaderboardContainer>
@@ -59,16 +107,13 @@ export const SinglePlayerGame = () => {
                 Developer Company:
                 </Text>
                 <Text>
-                Publisher:
+                Publisher: {getPublisher(key)}
                 </Text>
                 <Text>
-                Type:
+                Genre: {type}
                 </Text>
                 <Text>
-                Genre:
-                </Text>
-                <Text>
-                Release Date:
+                Release Date: {date}
                 </Text>
                 <PlayButton>Play</PlayButton>
             </GameDescription>

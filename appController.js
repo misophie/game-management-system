@@ -45,9 +45,10 @@ router.get('/publisherscount', async(req, res) => {
 //     }
 // });
 
-// router.post("/insert-demotable", async (req, res) => {
-//     const { id, name } = req.body;
-//     const insertResult = await appService.insertDemotable(id, name);
+// router.post("/insert-new-user", async (req, res) => {
+//     const { username, pword } = req.body;
+//     const insertResult = await appService.insertDemotable(username, pword);
+
 //     if (insertResult) {
 //         res.json({ success: true });
 //     } else {

@@ -1,4 +1,5 @@
 import React from "react";
+import { useLocation } from 'react-router-dom';
 import styled from "styled-components";
 import DummyImage from "../images/300.png";
 import { LeaderboardComponent } from "../components/LeaderboardComponent";
@@ -11,13 +12,13 @@ const GameContainer = styled.div`
   width: 100%;
   justify-content: center; 
   gap: 10%;
-  padding-top: 10%;
+  padding-top: 5%;
 `;
 
 const AvatarLeaderboardContainer = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 10%;
+    gap: 5%;
 `
 
 const GameDescription = styled.div`
@@ -35,6 +36,13 @@ const Text = styled.text`
     color: #333;
     font-weight: bold;
 `
+const Heading = styled.text`
+    color: #333;
+    font-size: 32px;
+    text-align: center;
+    font-weight: bold;
+`
+
 const AllTeamContainer = styled.div`
     display: flex;
     flex-direction: column;
@@ -63,9 +71,18 @@ const PlayButton = styled.button`
 `
 
 export const MultiplayerGame = () => {
+    const location = useLocation();
+    const data = location.state;
+    console.log(data)
+
+    const { title, type, date } = data;
+
     return(
         <GameContainer>
             <AvatarLeaderboardContainer>
+            <Heading>
+                {title}
+            </Heading>
             <PlayerAvatar src={DummyImage} alt="this is a dog" />
             <LeaderboardComponent title={"Leaderboard"}/>
             </AvatarLeaderboardContainer>
@@ -79,9 +96,6 @@ export const MultiplayerGame = () => {
                 </Text>
                 <Text>
                 Type:
-                </Text>
-                <Text>
-                Genre:
                 </Text>
                 <Text>
                 Release Date:

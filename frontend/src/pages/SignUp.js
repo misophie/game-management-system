@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import axios from "axios";
 
 const PageContainer = styled.div`
     display: flex;
@@ -53,6 +54,29 @@ const SignUpButton = styled.button`
 `
 
 export const SignUp = () => {
+    const [data, setData] = useState('');
+
+    const handleClick = () => {
+        // Sample data to be sent in the POST request
+        const postData = {
+            user: "f",
+            pword: "f"
+        };
+    
+        // Make a POST request to the backend
+        axios.post('http://localhost:65535/insert-new-user', postData)
+            .then(response => {
+            // Assuming the response contains the updated data
+            setData(response.data["data"]);
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    
+        console.log(data);
+
+    }
+
+    
+
     return(
         <PageContainer>
             <Title>Sign Up</Title>
@@ -68,7 +92,7 @@ export const SignUp = () => {
                         type = "text"
                         placeholder="Enter text here"/>
             </InnerContainer>
-            <SignUpButton>Sign Up</SignUpButton>
+            <SignUpButton onClick={handleClick}>Sign Up</SignUpButton>
         </PageContainer>
     )
 }
