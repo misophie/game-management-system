@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from 'react-router-dom';
 import styled from "styled-components";
 import DummyImage from "../images/300.png";
 import { LeaderboardComponent } from "../components/LeaderboardComponent";
+import axios from "axios";
 
 const GameContainer = styled.div`
   display: flex;
@@ -57,11 +58,38 @@ const PlayButton = styled.button`
 export const SinglePlayerGame = () => {
     const location = useLocation();
     const data = location.state;
+    const [developerData, setDeveloperData] = useState('');
+    const [publisherData, setPublisherData] = useState('');
+
+
     console.log(data)
 
-    const { title, type, date } = data;
+    const { key, title, type, date, publisher } = data;
 
-    // console.log(prop1);
+    console.log(data);
+
+    useEffect(() => {
+        // Fetch data from Express backend
+        axios.get('http://localhost:65535/developer-company')
+            .then(response => setDeveloperData(response.data["data"]))
+            .catch(error => console.error('Error fetching data:', error));
+        }, []);
+
+    useEffect(() => {
+        // Fetch data from Express backend
+        axios.get('http://localhost:65535/publishers')
+            .then(response => setPublisherData(response.data["data"]))
+            .catch(error => console.error('Error fetching data:', error));
+        }, []);
+
+    const getPublisher = (id) => {
+        var newPublisherData = Object.values(publisherData)
+
+        const matchingEntry = newPublisherData.find(entry => entry[0] === id);
+        console.log(matchingEntry ? matchingEntry[1] : null);
+
+        return matchingEntry ? matchingEntry[1] : "Null";
+    }
 
 
     return(
@@ -79,7 +107,7 @@ export const SinglePlayerGame = () => {
                 Developer Company:
                 </Text>
                 <Text>
-                Publisher:
+                Publisher: {getPublisher(key)}
                 </Text>
                 <Text>
                 Genre: {type}
