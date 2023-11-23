@@ -2,3 +2,4 @@
 .env
 .oracledir
 appService.js
+queries.txt

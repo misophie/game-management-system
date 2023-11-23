@@ -21,6 +21,21 @@ router.get('/games', async (req, res) => {
     res.json({data: tableContent});
 });
 
+router.get('/publishers', async(req, res) => {  
+    const tableContent = await appService.getAllPublishersGames();
+    res.json({data:tableContent});
+});
+
+router.get('/gamescount', async(req, res) => {  
+    const tableContent = await appService.countGamestable();
+    res.json({data:tableContent});
+});
+
+router.get('/publisherscount', async(req, res) => {  
+    const tableContent = await appService.countPublishersWithGamestable();
+    res.json({data:tableContent});
+});
+
 // router.post("/initiate-demotable", async (req, res) => {
 //     const initiateResult = await appService.initiateDemotable();
 //     if (initiateResult) {
