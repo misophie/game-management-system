@@ -21,6 +21,11 @@ router.get('/games', async (req, res) => {
     res.json({data: tableContent});
 });
 
+router.get('/publishers', async (req, res) => {
+    const tableContent = await appService.getGamePublisher();
+    res.json({data: tableContent});
+});
+
 // router.post("/initiate-demotable", async (req, res) => {
 //     const initiateResult = await appService.initiateDemotable();
 //     if (initiateResult) {
@@ -30,9 +35,10 @@ router.get('/games', async (req, res) => {
 //     }
 // });
 
-// router.post("/insert-demotable", async (req, res) => {
-//     const { id, name } = req.body;
-//     const insertResult = await appService.insertDemotable(id, name);
+// router.post("/insert-new-user", async (req, res) => {
+//     const { username, pword } = req.body;
+//     const insertResult = await appService.insertDemotable(username, pword);
+
 //     if (insertResult) {
 //         res.json({ success: true });
 //     } else {

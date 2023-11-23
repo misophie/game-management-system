@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate  } from "react-router-dom";
 import styled from "styled-components";
 import DummyImage from "../images/300.png";
 import axios from "axios";
@@ -35,40 +35,54 @@ const GameImageContainer = styled.div`
 `
 // true = multiplayer
 // false = single-player game
-const GameTitle = ({title, img, gameType = false}) => {
+const GameTitle = ({title, img, gameType = false, genre, date}) => {
+    const navigate = useNavigate();
+
+    const handleLinkClick = () => {
+        // Pass props using the state property
+        navigate(genre === "RPG" ? "/single-player-game" : "/multi-player-game", { state: { title: title, type: genre, date: date} });
+    };
+
+
     return(
-        <Link to={gameType ? "/multi-player-game" : "/single-player-game"}>
+        <div onClick={handleLinkClick}>
           <GameImageContainer>
             <GameImage src={DummyImage} alt="this is a dog" />
             <Title>{title}</Title>
         </GameImageContainer>
-        </Link>
+        </div>
     )
 }
 
+
 export const AllGames = () => {
     const [data, setData] = useState('');
+
 
     useEffect(() => {
         // Fetch data from Express backend
         axios.get('http://localhost:65535/games')
           .then(response => setData(response.data["data"]))
           .catch(error => console.error('Error fetching data:', error));
-          console.log(data["data"]);
-      }, []);
+          console.log(data);
+      }, [data]);
 
 
-    
     return(
     <PageContainer>
             <AllGameContainer>
             {Array.isArray(data) ? (
-            data.map(game => (
-                <GameTitle key={game.id} title={game.title} gameType={game.type} />
-            ))
-            ) : (
-            <p>Loading...</p>
-            )}      
+                data.map(game => (
+                    <GameTitle 
+                    key={game.gameId} 
+                    title={game.title} 
+                    genre={game.genre} 
+                    date={game.releaseDate}
+                    gameType={true}/>
+                ))
+                ) : (
+                <p>Loading...</p>
+                )}      
         </AllGameContainer>
     </PageContainer>
         
