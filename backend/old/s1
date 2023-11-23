@@ -1,3 +1,31 @@
+Skip to content
+ Enterprise
+Search or jump to…
+Pull requests
+Issues
+Explore
+ 
+@audreyt2 
+CPSC304-2023W-T1
+/
+project_c2e1k_o4k7x_x3v7f
+Private
+Cannot fork because forking is disabled.
+Code
+Issues
+Pull requests
+Projects
+Security
+Insights
+project_c2e1k_o4k7x_x3v7f/backend/old./s1
+@audreyt2
+audreyt2 Move s1.sql to old
+Latest commit b98852f now
+ History
+ 1 contributor
+282 lines (232 sloc)  12.2 KB
+ 
+
 -- Drop existing tables
 
 drop table LeaderboardStatistic;
@@ -279,4 +307,3 @@ insert into Friend (playerID1, playerID2) values (2, 3);
 insert into Friend (playerID1, playerID2) values (3, 4);
 insert into Friend (playerID1, playerID2) values (4, 5);
 insert into Friend (playerID1, playerID2) values (5, 3);
-

@@ -10,6 +10,7 @@ const dbConfig = {
   user: envVariables.ORACLE_USER,
   password: envVariables.ORACLE_PASS,
   connectString: `${envVariables.ORACLE_HOST}:${envVariables.ORACLE_PORT}/${envVariables.ORACLE_DBNAME}`,
+
 };
 
 // ----------------------------------------------------------
