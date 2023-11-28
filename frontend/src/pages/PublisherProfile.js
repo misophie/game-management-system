@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import DummyImage from "../images/300.png";
 
-const DeveloperContainer = styled.div`
+const PublisherContainer = styled.div`
     display: flex;
     flex-direction: row;
     background-color: #f0f0f0;    
@@ -13,14 +13,14 @@ const DeveloperContainer = styled.div`
     padding-top: 10%;
 `;
 
-const DeveloperDescription = styled.div`
+const PublisherDescription = styled.div`
     display: flex;
     flex-direction: column;
     max-width: 50%;
     gap: 10%
 `;
 
-const DeveloperImage = styled.div`
+const PublisherImage = styled.div`
     width: 300px;
     height: 300px;
 `;
@@ -31,18 +31,18 @@ const Text = styled.text`
     font-weight: bold;
 `;
 
-export const DeveloperProfile = () => {
+export const PublisherProfile = () => {
     return(
-        <DeveloperContainer>
-            <DeveloperImage scr = {DummyImage} alt = "our company's logo" />
-            <DeveloperDescription>
+        <PublisherContainer>
+            <PublisherImage scr = {DummyImage} alt = "our company's logo" />
+            <PublisherDescription>
                 <Text>
                 Name: xxx
                 </Text>
                 <Text>
                 Headquarter City: xxx 
                 </Text>
-            </DeveloperDescription>
-        </DeveloperContainer>
+            </PublisherDescription>
+        </PublisherContainer>
     )
 }
