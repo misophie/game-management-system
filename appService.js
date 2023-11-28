@@ -154,7 +154,7 @@ async function getGenreStatistic() {
     });
 }
 
-async function getGenreStatisticDiffiuclty() {
+async function getGenreStatisticDifficulty() {
     return await withOracleDB(async(connection) => {
         const result = await connection.execute('SELECT g.genre, AVG(sg.difficulty) AS average_difficulty FROM game g JOIN singleplayergame sg ON g.gameid = sg.gameid GROUP BY g.genre')
         const rows = result.rows;
@@ -179,7 +179,7 @@ module.exports = {
     testOracleConnection,
     fetchAllGamesFromDb,
     getGenreStatistic,
-    getGenreStatisticDiffiuclty,   
+    getGenreStatisticDifficulty,   
     // initiateDemotable, 
     // insertDemotable, 
     // updateNameDemotable, 

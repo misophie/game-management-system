@@ -32,7 +32,7 @@ router.get('/genre', async(req, res) => {
 });
 
 router.get('/genre-difficulty', async(req, res) => {  
-    const tableContent = await appService.getGenreStatisticDiffiuclty();
+    const tableContent = await appService.getGenreStatisticDifficulty();
     
     res.json({data:tableContent});
 });
