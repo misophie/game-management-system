@@ -142,6 +142,30 @@ async function getAllPublishersGames() {
     });
 }
 
+async function getGenreStatistic() {
+    return await withOracleDB(async(connection) => {
+        const result = await connection.execute('select genre, count(*) as game_count from game group by genre')
+
+        const rows = result.rows;
+    
+        return rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function getGenreStatisticDiffiuclty() {
+    return await withOracleDB(async(connection) => {
+        const result = await connection.execute('SELECT g.genre, AVG(sg.difficulty) AS average_difficulty FROM game g JOIN singleplayergame sg ON g.gameid = sg.gameid GROUP BY g.genre')
+        const rows = result.rows;
+    
+        return rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+
 async function countPublishersWithGamestable() {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(`SELECT count(*) FROM publisher pb, publishes p, game g WHERE pb.publisherID = p.publisherID AND g.gameID = p.gameID`);
@@ -153,7 +177,9 @@ async function countPublishersWithGamestable() {
 
 module.exports = {
     testOracleConnection,
-    fetchAllGamesFromDb,   
+    fetchAllGamesFromDb,
+    getGenreStatistic,
+    getGenreStatisticDiffiuclty,   
     // initiateDemotable, 
     // insertDemotable, 
     // updateNameDemotable, 
