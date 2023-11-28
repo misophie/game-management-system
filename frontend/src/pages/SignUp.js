@@ -53,18 +53,54 @@ const SignUpButton = styled.button`
     width: 50%
 `
 
+const SignInButton = styled.button`
+    background-color: #007bff;
+    color: white; 
+    font-size: 16px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 50%
+`
+
+const Padding = styled.div`
+    padding-bottom: 0.1cm
+`
+
 export const SignUp = () => {
     const [data, setData] = useState('');
+    const [userInfo, postData] = useState('')
 
     const handleClick = () => {
+        console.log('handleClick called');
+        // !! SANITIZE INPUT BEFORE POSTING OR WHEN MAKING REQUEST TO BACKEND
+        // particularly, the date input
+            
         // Sample data to be sent in the POST request
-        const postData = {
-            user: "f",
-            pword: "f"
-        };
+        // const postData = {
+        //     user: "f",
+        //     pword: "f"
+        // }; 
     
+        const postData = () => {
+            const user = document.getElementById('user').value;
+            const pword = document.getElementById('pword').value;
+            const dob = document.getElementById('dob').value;
+            return {
+                user: user,
+                pword: pword,
+                dob: dob
+            }
+        }
+        
+        console.log("User inputs:")
+        console.log(userInfo.user);
+        // console.log(pword);
+        // console.log(dob);
+
         // Make a POST request to the backend
-        axios.post('http://localhost:65535/insert-new-user', postData)
+        axios.post('http://localhost:55001/insert-new-user', postData)
             .then(response => {
             // Assuming the response contains the updated data
             setData(response.data["data"]);
@@ -79,18 +115,27 @@ export const SignUp = () => {
 
     return(
         <PageContainer>
-            <Title>Sign Up</Title>
+            <Title>Please fill out the information below:</Title>
             <InnerContainer>
                 <Text>Username:</Text>
                 <InputTextBox
                     type = "text"
-                    placeholder="Enter text here"/>
+                    id = 'user'
+                    placeholder="Enter username here"/>
             </InnerContainer>
             <InnerContainer>
                 <Text>Password:</Text>
                     <InputTextBox
                         type = "text"
-                        placeholder="Enter text here"/>
+                        id = 'pword'
+                        placeholder="Enter password here"/>
+            </InnerContainer>
+            <InnerContainer>
+                <Text>Date of Birth (DD-MM-YYYY):</Text>
+                    <InputTextBox
+                        type = "text"
+                        id = 'dob'
+                        placeholder="Enter birthday here"/>
             </InnerContainer>
             <SignUpButton onClick={handleClick}>Sign Up</SignUpButton>
         </PageContainer>
