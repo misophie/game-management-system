@@ -7,9 +7,12 @@ const envVariables = loadEnvFile("./.env");
 
 // Database configuration setup. Ensure your .env file has the required database credentials.
 const dbConfig = {
-  user: envVariables.ORACLE_USER,
-  password: envVariables.ORACLE_PASS,
-  connectString: `${envVariables.ORACLE_HOST}:${envVariables.ORACLE_PORT}/${envVariables.ORACLE_DBNAME}`,
+  user: 'ora_sophsong',
+  password: 'a48161814',
+  // user: envVariables.ORACLE_USER,
+  // password: envVariables.ORACLE_PASS,
+  connectString: `${envVariables.ORACLE_HOST}:${envVariables.ORACLE_PORT}/${envVariables.ORACLE_DBNAME}`
+  // connectString: 'localhost:50000/stu'
 };
 
 // ----------------------------------------------------------
@@ -75,6 +78,20 @@ async function getGamePublisher() {
         `);
 
     return result.rows;
+  }).catch(() => {
+    return false;
+  });
+}
+
+async function insertNewUser(username, pword) {
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(
+      `INSERT INTO DEMOTABLE (id, name) VALUES (:id, :name)`,
+      [id, name],
+      { autoCommit: true }
+    );
+
+    return result.rowsAffected && result.rowsAffected > 0;
   }).catch(() => {
     return false;
   });

@@ -13,7 +13,7 @@ router.get('/check-db-connection', async (req, res) => {
         res.send('connected');
     } else {
         res.send('unable to connect');
-    }
+    } 
 });
 
 router.get('/games', async (req, res) => {

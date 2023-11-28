@@ -63,7 +63,7 @@ export const AllGames = () => {
 
     useEffect(() => {
         // Fetch data from Express backend
-        axios.get('http://localhost:65535/games')
+        axios.get('http://localhost:55001/games')
           .then(response => setData(response.data["data"]))
           .catch(error => console.error('Error fetching data:', error));
       }, []);

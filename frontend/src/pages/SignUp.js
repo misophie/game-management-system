@@ -87,6 +87,11 @@ export const SignUp = () => {
             const user = document.getElementById('user').value;
             const pword = document.getElementById('pword').value;
             const dob = document.getElementById('dob').value;
+
+            console.log(user);
+            console.log(pword);
+            console.log(dob);
+
             return {
                 user: user,
                 pword: pword,
