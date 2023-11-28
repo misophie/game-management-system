@@ -26,6 +26,17 @@ router.get('/publishers', async(req, res) => {
     res.json({data:tableContent});
 });
 
+router.get('/genre', async(req, res) => {  
+    const tableContent = await appService.getGenreStatistic();
+    res.json({data:tableContent});
+});
+
+router.get('/genre-difficulty', async(req, res) => {  
+    const tableContent = await appService.getGenreStatisticDiffiuclty();
+    
+    res.json({data:tableContent});
+});
+
 router.get('/gamescount', async(req, res) => {  
     const tableContent = await appService.countGamestable();
     res.json({data:tableContent});
