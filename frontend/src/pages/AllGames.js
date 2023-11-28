@@ -35,13 +35,13 @@ const GameImageContainer = styled.div`
 `
 // true = multiplayer
 // false = single-player game
-const GameTitle = ({key, title, img, gameType = false, genre, date, publisher}) => {
+const GameTitle = ({key, title, img, gameType = false, genre, date, publisher, company}) => {
     const navigate = useNavigate();
 
 
     const handleLinkClick = () => {
         // Pass props using the state property
-        navigate(genre === "RPG" ? "/single-player-game" : "/multi-player-game", { state: {key: key, title: title, type: genre, date: date, publisher: publisher} });
+        navigate(genre === "RPG" ? "/single-player-game" : "/multi-player-game", { state: {key: key, title: title, type: genre, date: date, publisher: publisher, company: company} });
     };
 
 
@@ -63,14 +63,12 @@ export const AllGames = () => {
 
     useEffect(() => {
         // Fetch data from Express backend
-        axios.get('http://localhost:65535/games')
+        axios.get('http://localhost:55001/publishers')
           .then(response => setData(response.data["data"]))
           .catch(error => console.error('Error fetching data:', error));
       }, []);
 
-      console.log(data[0].gameId);
-
-
+    console.log(data);
 
     return(
     <PageContainer>
@@ -83,6 +81,8 @@ export const AllGames = () => {
                     genre={game.genre} 
                     date={game.releaseDate}
                     gameType={true}
+                    publisher={game.publisherName}
+                    company={game.companyName}
                     />
                 ))
                 ) : (
