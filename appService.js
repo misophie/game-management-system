@@ -119,12 +119,15 @@ async function countGamestable() {
 
 async function getAllPublishersGames() {
     return await withOracleDB(async(connection) => {
-        const result = await connection.execute('SELECT pb.PublisherID, pb.publisherName, g.GameID, Title, Genre, releaseDate, platform FROM publisher pb, publishes p, game g WHERE pb.publisherID = p.publisherID AND g.gameID = p.gameID')
+    
+        // const result = await connection.execute('SELECT d.companyid, d.companyName, pb.PublisherID, pb.publisherName, g.GameID, Title, Genre, releaseDate, platform FROM developercompany d, develops dv, publisher pb, publishes p, game g WHERE pb.publisherID = p.publisherID AND g.gameID = p.gameID AND d.companyid = dv.companyid AND dv.gameid = g.gameid')
+        const result = await connection.execute('SELECT d.companyName, p.publisherName, game.GameID, game.Title, game.Genre, game.releaseDate, game.platform FROM game LEFT JOIN (SELECT * FROM develops INNER JOIN developercompany ON develops.companyid = developercompany.companyid) d ON d.gameId = game.gameId LEFT JOIN (SELECT * FROM publishes INNER JOIN publisher ON publishes.publisherid = publisher.publisherid) p ON p.gameId = game.gameId')
+
         const rows = result.rows;
         // console.log(rows);
         const publisherGameData = rows.map(row => {
             return {
-                publisherId: row[0],
+                companyName: row[0],
                 publisherName: row[1],
                 gameId: row[2],
                 title: row[3],

@@ -32,10 +32,11 @@ const PlayerAvatar = styled.img`
     height: 300px;
 `
 const Text = styled.text`
-    font-size: 16px;
+    font-size: 24px;
     color: #333;
     font-weight: bold;
 `
+
 const Heading = styled.text`
     color: #333;
     font-size: 32px;
@@ -73,9 +74,10 @@ const PlayButton = styled.button`
 export const MultiplayerGame = () => {
     const location = useLocation();
     const data = location.state;
-    console.log(data)
 
-    const { title, type, date } = data;
+    console.log(data);
+
+    const { title, type, date, publisher, company } = data;
 
     return(
         <GameContainer>
@@ -89,18 +91,17 @@ export const MultiplayerGame = () => {
 
             <GameDescription>
                 <Text>
-                Developer Company:
+                Developer Company: {company}
                 </Text>
                 <Text>
-                Publisher:
+                Publisher:{publisher}
                 </Text>
                 <Text>
-                Type:
+                Type: {type}
                 </Text>
                 <Text>
-                Release Date:
+                Release Date: {date}
                 </Text>
-
                 <AllTeamContainer>
                 <Text>
                     Team Members

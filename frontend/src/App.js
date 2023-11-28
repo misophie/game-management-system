@@ -12,11 +12,11 @@ function App() {
     <div>
       <NavigationBar />
       <Routes>
-          <Route path="/" element={<PlayerProfile />} />
+          <Route path="/player-profile" element={<PlayerProfile />} />
           <Route path="/games" element={<AllGames />} />
           <Route path="/single-player-game" element={<SinglePlayerGame />} />
           <Route path="/multi-player-game" element={<MultiplayerGame/>} />
-          <Route path="sign-up-page" element={<SignUp />} />
+          <Route path="/" element={<SignUp />} />
       </Routes>
     </div>
   );

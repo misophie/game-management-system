@@ -58,38 +58,10 @@ const PlayButton = styled.button`
 export const SinglePlayerGame = () => {
     const location = useLocation();
     const data = location.state;
-    const [developerData, setDeveloperData] = useState('');
-    const [publisherData, setPublisherData] = useState('');
-
-
-    console.log(data)
-
-    const { key, title, type, date, publisher } = data;
 
     console.log(data);
 
-    useEffect(() => {
-        // Fetch data from Express backend
-        axios.get('http://localhost:65535/developer-company')
-            .then(response => setDeveloperData(response.data["data"]))
-            .catch(error => console.error('Error fetching data:', error));
-        }, []);
-
-    useEffect(() => {
-        // Fetch data from Express backend
-        axios.get('http://localhost:65535/publishers')
-            .then(response => setPublisherData(response.data["data"]))
-            .catch(error => console.error('Error fetching data:', error));
-        }, []);
-
-    const getPublisher = (id) => {
-        var newPublisherData = Object.values(publisherData)
-
-        const matchingEntry = newPublisherData.find(entry => entry[0] === id);
-        console.log(matchingEntry ? matchingEntry[1] : null);
-
-        return matchingEntry ? matchingEntry[1] : "Null";
-    }
+    const { title, type, date, publisher, company } = data;
 
 
     return(
@@ -104,10 +76,10 @@ export const SinglePlayerGame = () => {
 
             <GameDescription>
                 <Text>
-                Developer Company:
+                Developer Company: {company}
                 </Text>
                 <Text>
-                Publisher: {getPublisher(key)}
+                Publisher: {publisher}
                 </Text>
                 <Text>
                 Genre: {type}
