@@ -119,11 +119,13 @@ export const PlayerProfile = () => {
         axios.post('http://localhost:55001/update-user-bio', userInfo)
         .then(response => {
         // Assuming the response contains the updated data
-        setData(response.data["data"]);
+        setData(response.data.success.rows[0]);
         })
         .catch(error => console.error('Error fetching data:', error));
 
     };
+
+    
 
     return(
         <PlayerContainer>
@@ -138,8 +140,10 @@ export const PlayerProfile = () => {
                 </Text>
                 <Text>
                 Bio:<EditableText text={text} isEditable={editable} onEdit={handleEditClick} onSave={handleSave} />
-                <PageButton onClick={handleEditClick}>Edit button </PageButton>
                 </Text>
+                <PageButton onClick={handleEditClick}>Edit button </PageButton>
+                {data && editable !== true ? "Success! Your old bio was: " + data : null}
+                
                 
                 <Text>
                 

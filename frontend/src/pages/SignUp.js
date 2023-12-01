@@ -73,6 +73,7 @@ export const SignUp = () => {
     const [data, setData] = useState(false);
     const [dob, setDOB] = useState('')
     const [email, setEmail] = useState('');
+    const [error, setError] = useState(false);
 
     const handleClick = () => {    
         const userInfo =  {
@@ -86,7 +87,10 @@ export const SignUp = () => {
             // Assuming the response contains the updated data
             setData(response["data"]["success"])
             })
-            .catch(error => console.error('Error fetching data:', error));
+            .catch(error => {
+                setError(error)
+
+            });
     
     }
 
@@ -114,8 +118,7 @@ export const SignUp = () => {
             <div>
                 Sucessfully signed up! Please sign in now.
             </div> : 
-            <div>      
-            </div>
+            (error ? "Request failed. Ensure that you are writing your email correctly, and the proper format for date" : null)
             }
         </PageContainer>
     )

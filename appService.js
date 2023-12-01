@@ -129,20 +129,6 @@ async function getGamePublisher() {
   });
 }
 
-async function insertNewUser(username, pword) {
-  return await withOracleDB(async (connection) => {
-    const result = await connection.execute(
-      `INSERT INTO DEMOTABLE (id, name) VALUES (:id, :name)`,
-      [id, name],
-      { autoCommit: true }
-    );
-
-    return result.rowsAffected && result.rowsAffected > 0;
-  }).catch(() => {
-    return false;
-  });
-}
-
 async function countGamestable() {
   return await withOracleDB(async (connection) => {
     const result = await connection.execute("SELECT Count(*) FROM Game");
@@ -234,7 +220,7 @@ async function insertNewUser(email, dob) {
     usernum = usernum + 1
 
     const result = await connection.execute(
-      `INSERT INTO Player (playerID, playerEmail, dateOfBirth, rank, avatar, bio) VALUES (:usernum, :email, TO_DATE(:dob, 'DD-MM-YYYY'), 0, '/path/to/default.jpg', 'Feel free to change bio')`,
+      `INSERT INTO Player (playerID, playerEmail, dateOfBirth, rank, avatar, bio) VALUES (:usernum, :email, TO_DATE(:dob, 'DD-MM-YYYY'), 0, '/path/to/default.jpg', 'Click button to edit here!')`,
       [usernum, email, dob],
       { autoCommit: true }
     );
@@ -245,15 +231,36 @@ async function insertNewUser(email, dob) {
   });
 }
 
-async function updateUser(newBio, email) {
+
+async function getUserBio(newBio, email) {
   return await withOracleDB(async (connection) => {
+
+    const oldBio = await connection.execute('select bio from player where playerEmail=:email', [email], {autoCommit: true});
+
     const result = await connection.execute(
       `UPDATE Player SET bio=:newBio WHERE playerEmail=:email`,
       [newBio, email],
       { autoCommit: true }
     );
 
-    return result.rowsAffected && result.rowsAffected > 0;
+    return oldBio;
+  }).catch(() => {
+    return false;
+  });
+}
+
+async function updateUser(newBio, email) {
+  return await withOracleDB(async (connection) => {
+
+    const oldBio = await connection.execute('select bio from player where playerEmail=:email', [email], {autoCommit: true});
+
+    const result = await connection.execute(
+      `UPDATE Player SET bio=:newBio WHERE playerEmail=:email`,
+      [newBio, email],
+      { autoCommit: true }
+    );
+
+    return oldBio;
   }).catch(() => {
     return false;
   });
