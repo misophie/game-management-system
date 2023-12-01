@@ -18,6 +18,17 @@ router.get('/check-db-connection', async (req, res) => {
     } 
 });
 
+router.get('/tables', async (req, res) => {
+    const tableContent = await appService.getAllTables();
+    res.json({data: tableContent});
+});
+
+router.get('/tableattributes', async (req, res) => {
+    const { selectedTable } = req.query;
+    const tableContent = await appService.getAllAttributesOfTable(selectedTable);
+    res.json({data: tableContent});
+});
+
 router.get('/games', async (req, res) => {
     const tableContent = await appService.fetchAllGamesFromDb();
     res.json({data: tableContent});

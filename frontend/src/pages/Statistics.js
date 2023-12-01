@@ -4,6 +4,7 @@ import styled from "styled-components";
 import DummyImage from "../images/300.png";
 import axios from "axios";
 import { Dropdown } from "../components/DropdownComponent";
+import { Projection } from "../components/Projection";
 
 const PageButton = styled.button`
   background-color: #007bff;
@@ -87,6 +88,7 @@ export const Statistics = () => {
     
     return(
     <PageContainer>
+
         <Heading>
             Statistics
         </Heading>
@@ -113,6 +115,7 @@ export const Statistics = () => {
             </AllStatisticsContainer> : 
             null
         }
+        <Projection />
 
     </PageContainer>
         

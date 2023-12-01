@@ -49,6 +49,36 @@ async function testOracleConnection() {
   });
 }
 
+async function getAllTables() {
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(`select table_name from user_tables`);
+    const rows = result.rows;
+    return rows;
+    // return rows;
+  }).catch(() => {
+    return [];
+  });
+}
+
+async function getAllAttributesOfTable(selectedTable) {
+
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(
+      `select * from :selectedTableFinal`,
+      [selectedTable],
+      { autoCommit: true }
+    );
+    
+    const rows = result;
+    return rows;
+    // return rows;
+  }).catch(() => {
+    return [];
+  });
+
+}
+
+
 async function fetchAllGamesFromDb() {
   return await withOracleDB(async (connection) => {
     const result = await connection.execute(`SELECT * FROM Game`);
@@ -284,6 +314,8 @@ module.exports = {
     insertNewUser,
     updateUser,
     currentUser,
+    getAllTables,
+    getAllAttributesOfTable,
     // initiateDemotable, 
     // insertDemotable, 
     // updateNameDemotable, 
