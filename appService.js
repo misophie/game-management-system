@@ -152,29 +152,29 @@ async function countGamestable() {
   });
 }
 
-async function getAllPublishersGames() {
-  return await withOracleDB(async (connection) => {
-    const result = await connection.execute('SELECT pb.PublisherID, pb.publisherName, g.GameID, Title, Genre, releaseDate, platform FROM publisher pb, publishes p, game g WHERE pb.publisherID = p.publisherID AND g.gameID = p.gameID')
-    // const result = await connection.execute("");
+// async function getAllPublishersGames() {
+//   return await withOracleDB(async (connection) => {
+//     const result = await connection.execute('SELECT pb.PublisherID, pb.publisherName, g.GameID, Title, Genre, releaseDate, platform FROM publisher pb, publishes p, game g WHERE pb.publisherID = p.publisherID AND g.gameID = p.gameID')
+//     // const result = await connection.execute("");
 
-    const rows = result.rows;
+//     const rows = result.rows;
 
-    const publisherGameData = rows.map(row => {
-        return {
-            publisherId: row[0],
-            publisherName: row[1],
-            gameId: row[2],
-            title: row[3],
-            genre: row[4],
-            releaseDate: row[5],
-            platform: row[6]
-        };
-    });
-    return publisherGameData;
-  }).catch(() => {
-    return [];
-  });
-}
+//     const publisherGameData = rows.map(row => {
+//         return {
+//             publisherId: row[0],
+//             publisherName: row[1],
+//             gameId: row[2],
+//             title: row[3],
+//             genre: row[4],
+//             releaseDate: row[5],
+//             platform: row[6]
+//         };
+//     });
+//     return publisherGameData;
+//   }).catch(() => {
+//     return [];
+//   });
+// }
 
 async function getGenreStatistic() {
   return await withOracleDB(async (connection) => {
@@ -276,15 +276,33 @@ async function currentUser(email) {
 
 async function getAllPublishersGames(selectedOption) {
     return await withOracleDB(async(connection) => {
-      
-        const result = await connection.execute('SELECT d.developerName, pb.publisherName, g.GameID, Title, Genre, releaseDate, platform FROM developercompany d, developergame dv, publisher pb, publishergame p, game g WHERE pb.publisherID = p.publisherID AND g.gameID = p.gameID AND d.developerid = dv.developerid AND dv.gameid = g.gameid AND g.genre=:selectedOption',
-        [selectedOption],
-        { autoCommit: true }
-        );
-        // const result = await connection.execute('SELECT d.companyName, p.publisherName, game.GameID, game.Title, game.Genre, game.releaseDate, game.platform FROM game LEFT JOIN (SELECT * FROM develops INNER JOIN developercompany ON develops.companyid = developercompany.companyid) d ON d.gameId = game.gameId LEFT JOIN (SELECT * FROM publishes INNER JOIN publisher ON publishes.publisherid = publisher.publisherid) p ON p.gameId = game.gameId')
+      const whereConditions = selectedOption.length > 0 ? selectedOption.map((option) => `g.genre = '${option}'`).join(' OR ') : '';
+
+      const query = `
+        SELECT
+          d.developerName,
+          pb.publisherName,
+          g.GameID,
+          Title,
+          Genre,
+          releaseDate,
+          platform
+        FROM
+          developercompany d,
+          developergame dv,
+          publisher pb,
+          publishergame p,
+          game g
+        WHERE
+          pb.publisherID = p.publisherID
+          AND g.gameID = p.gameID
+          AND d.developerid = dv.developerid
+          AND dv.gameid = g.gameid
+          AND (${whereConditions})
+      `;
+        const result = await connection.execute(query)
 
         const rows = result.rows;
-        // console.log(rows);
         const publisherGameData = rows.map(row => {
             return {
                 companyName: row[0],

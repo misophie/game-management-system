@@ -12,7 +12,7 @@ const DropdownToggle = styled.div`
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  width: 100px;
+  width: 300px;
   text-align: center;
 `;
 
@@ -27,7 +27,7 @@ const DropdownOptions = styled.ul`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border: 1px solid #ccc;
   border-radius: 4px;
-  width: 115px;
+  width: 300px;
   text-align: center;
   display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
 `;
