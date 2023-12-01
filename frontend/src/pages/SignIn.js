@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { sanitizeHTML } from "../functions";
 
 const PageContainer = styled.div`
     display: flex;
@@ -79,9 +80,8 @@ export const SignIn = () => {
     }
 
     const handleClick = () => {
-        // !! SANITIZE INPUT BEFORE POSTING OR WHEN MAKING REQUEST TO BACKEND
         const userInfo =  {
-            email: email,
+            email: sanitizeHTML(email),
         }
   
         axios.get('http://localhost:55001/current-user', {params: userInfo})
