@@ -186,11 +186,11 @@ async function insertNewUser(email, dob) {
   });
 }
 
-async function updateUser(newBio) {
+async function updateUser(newBio, email) {
   return await withOracleDB(async (connection) => {
     const result = await connection.execute(
-      `UPDATE Player SET bio=:newBio WHERE playerEmail='grace@gmail.com'`,
-      [newBio],
+      `UPDATE Player SET bio=:newBio WHERE playerEmail=:email`,
+      [newBio, email],
       { autoCommit: true }
     );
 
@@ -215,11 +215,14 @@ async function currentUser(email) {
 
 }
 
-async function getAllPublishersGames() {
+async function getAllPublishersGames(selectedOption) {
     return await withOracleDB(async(connection) => {
-    
-        // const result = await connection.execute('SELECT d.companyid, d.companyName, pb.PublisherID, pb.publisherName, g.GameID, Title, Genre, releaseDate, platform FROM developercompany d, develops dv, publisher pb, publishes p, game g WHERE pb.publisherID = p.publisherID AND g.gameID = p.gameID AND d.companyid = dv.companyid AND dv.gameid = g.gameid')
-        const result = await connection.execute('SELECT d.companyName, p.publisherName, game.GameID, game.Title, game.Genre, game.releaseDate, game.platform FROM game LEFT JOIN (SELECT * FROM develops INNER JOIN developercompany ON develops.companyid = developercompany.companyid) d ON d.gameId = game.gameId LEFT JOIN (SELECT * FROM publishes INNER JOIN publisher ON publishes.publisherid = publisher.publisherid) p ON p.gameId = game.gameId')
+      
+        const result = await connection.execute('SELECT d.developerName, pb.publisherName, g.GameID, Title, Genre, releaseDate, platform FROM developercompany d, developergame dv, publisher pb, publishergame p, game g WHERE pb.publisherID = p.publisherID AND g.gameID = p.gameID AND d.developerid = dv.developerid AND dv.gameid = g.gameid AND g.genre=:selectedOption',
+        [selectedOption],
+        { autoCommit: true }
+        );
+        // const result = await connection.execute('SELECT d.companyName, p.publisherName, game.GameID, game.Title, game.Genre, game.releaseDate, game.platform FROM game LEFT JOIN (SELECT * FROM develops INNER JOIN developercompany ON develops.companyid = developercompany.companyid) d ON d.gameId = game.gameId LEFT JOIN (SELECT * FROM publishes INNER JOIN publisher ON publishes.publisherid = publisher.publisherid) p ON p.gameId = game.gameId')
 
         const rows = result.rows;
         // console.log(rows);

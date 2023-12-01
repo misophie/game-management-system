@@ -70,6 +70,7 @@ const Padding = styled.div`
 export const SignIn = () => {
     const [email, setEmail] = useState('');
     const [data, setData] = useState(false);
+    const [profile, setProfile] = useState(null);
 
     const navigate = useNavigate();
 
@@ -87,8 +88,15 @@ export const SignIn = () => {
             .then(response => {
             // Assuming the response contains the updated data
             setData(response["data"]["data"].length >= 1)
+            setProfile(response["data"]["data"])
             })
             .catch(error => console.error('Error fetching data:', error));
+    }
+
+    console.log(profile)
+
+    const handlePlayerProfileClick = () => {
+        navigate("/player-profile", { state: {userInfo : profile} });
     }
 
     return(
@@ -105,6 +113,7 @@ export const SignIn = () => {
                 data ? 
                 <div>
                 Successfully signed in! 
+                <SignUpButton onClick={handlePlayerProfileClick}>Go to profile</SignUpButton>
                 </div> : 
                 <div>
                 </div>
