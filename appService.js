@@ -49,6 +49,50 @@ async function testOracleConnection() {
   });
 }
 
+async function getAllTables() {
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(`select table_name from user_tables`);
+    const rows = result.rows;
+    return rows;
+    // return rows;
+  }).catch(() => {
+    return [];
+  });
+}
+
+async function getAllAttributesOfTable(selectedTable) {
+
+  return await withOracleDB(async (connection) => {
+    const query = `select * from ${selectedTable}`;
+
+    const result = await connection.execute(query);
+    
+    const rows = result;
+    return rows;
+  }).catch(() => {
+    return [];
+  });
+
+}
+
+async function projectionQuery(selectedTable, queryAttributes) {
+  // selected table is a string 
+  // queryAttributes is an array 
+
+  const selectAttributes = queryAttributes.join(', ');
+  const query = `SELECT ${selectAttributes} FROM ${selectedTable}`;
+
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(query);
+    const rows = result;
+    return rows;
+  }).catch(() => {
+    return [];
+  });
+
+}
+
+
 async function fetchAllGamesFromDb() {
   return await withOracleDB(async (connection) => {
     const result = await connection.execute(`SELECT * FROM Game`);
@@ -284,6 +328,9 @@ module.exports = {
     insertNewUser,
     updateUser,
     currentUser,
+    getAllTables,
+    getAllAttributesOfTable,
+    projectionQuery,
     // initiateDemotable, 
     // insertDemotable, 
     // updateNameDemotable, 
