@@ -190,7 +190,7 @@ async function getGenreStatistic() {
   });
 }
 
-async function getGenreStatisticDiffiuclty() {
+async function getGenreStatisticDifficulty() {
   return await withOracleDB(async (connection) => {
     const result = await connection.execute(
       "SELECT g.genre, AVG(sg.difficulty) AS average_difficulty FROM game g JOIN singleplayergame sg ON g.gameid = sg.gameid GROUP BY g.genre HAVING AVG(sg.difficulty) > 3.0"
@@ -202,6 +202,21 @@ async function getGenreStatisticDiffiuclty() {
     return [];
   });
 }
+
+async function getNestedAggregationQuery() {
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(
+      "SELECT max(avgDif) FROM (SELECT genre, avg(difficulty) AS avgDif FROM SinglePlayerGame spg INNER JOIN Game ON spg.gameID = Game.gameID GROUP BY Genre)"
+    );
+    const rows = result.rows;
+
+    return rows;
+  }).catch(() => {
+    return [];
+  });
+}
+
+
 
 async function countPublishersWithGamestable() {
   return await withOracleDB(async (connection) => {
@@ -331,6 +346,7 @@ module.exports = {
     getAllTables,
     getAllAttributesOfTable,
     projectionQuery,
+    getNestedAggregationQuery,
     // initiateDemotable, 
     // insertDemotable, 
     // updateNameDemotable, 

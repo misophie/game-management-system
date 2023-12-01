@@ -8,6 +8,7 @@ import { MultiplayerGame } from "./pages/MultiplayerGame";
 import { SignIn } from "./pages/SignIn";
 import { SignUp } from "./pages/SignUp";
 import { Statistics } from "./pages/Statistics";
+import { ProjectionPage } from "./pages/ProjectionPage";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/" element={<SignIn />} />
           <Route path="/sign-up-page" element={<SignUp />} />
           <Route path="/statistics" element={<Statistics />} />
+          <Route path="/projection" element={<ProjectionPage />} />
       </Routes>
     </div>
   );

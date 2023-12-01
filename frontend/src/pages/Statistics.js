@@ -14,7 +14,7 @@ const PageButton = styled.button`
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  width: 50%;
+  width: 300px;
 `
 
 const PageContainer = styled.div`
@@ -36,15 +36,6 @@ const Heading = styled.h1`
     color: #333;
     font-weight: bold;  
 `
-const GameImage = styled.img`
-    width: 300px;
-    height: auto;
-`
-const GameImageContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-`
 
 const AllStatisticsContainer = styled.div`
     display: flex;
@@ -57,6 +48,33 @@ const StatisticContainer = styled.div`
     flex-direction: column;
     text-align: center;
 `
+
+const LeftAlignedContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  max-width: 800px; 
+  margin: 0 auto; 
+  padding: 20px;
+  text-align: left; 
+  gap: 30px;
+`;
+
+const Info = styled.div`
+  display: ${props => (props.isVisible ? 'flex' : 'none')};
+  gap: 20px;
+`;
+
+const InfoGenreStatistic = styled.div`
+  display: ${props => (props.isVisible ? 'flex' : 'none')};
+  gap: 20px;
+`;
+
+const InfoGenreNested = styled.div`
+  display: ${props => (props.isVisible ? 'flex' : 'none')};
+  gap: 20px;
+`;
+
+
 
 const AllGamesStatistic = ({genreTitle, genreNumber}) => {
     return(
@@ -71,36 +89,66 @@ const AllGamesStatistic = ({genreTitle, genreNumber}) => {
 
 export const Statistics = () => {
     const [genreData, setGenreData] = useState('');
-    const [displayGenre, setDisplayGenre] = useState(false);
+    const [nestedData, setNestedData] = useState([]);
+    const [havingData, setHavingData] = useState([]);
+    const [isInfoVisible, setIsInfoVisible] = useState(true);
+    const [isInfoVisibleStatistic, setisInfoVisibleStatistic] = useState(true);
+    const [isInfoVisibleAggregated, setisInfoVisibleAggregated] = useState(true);
+
 
     const handleGenreQuery = () => {
-        setDisplayGenre(true)
+        axios.get('http://localhost:55001/genre')
+        .then(response => setGenreData(response.data["data"]))
+        .catch(error => console.error('Error fetching data:', error));
+        setIsInfoVisible(!isInfoVisible);
+    }
+
+    const handleAggregationQuery = () => {
+        // Fetch data from Express backend
+    axios.get('http://localhost:55001/nestedQuery')
+    .then(response => setNestedData(response.data["data"]))
+    .catch(error => console.error('Error fetching data:', error))
+    setisInfoVisibleAggregated(!isInfoVisibleAggregated)
 
     }
 
-    useEffect(() => {
-    // Fetch data from Express backend
-    axios.get('http://localhost:55001/genre')
-        .then(response => setGenreData(response.data["data"]))
-        .catch(error => console.error('Error fetching data:', error));
-    }, []);
+    const handleGenreStatisticQuery = () => {
+        // Fetch data from Express backend
+    axios.get('http://localhost:55001/genre-difficulty')
+    .then(response => setHavingData(response.data["data"]))
+    .catch(error => console.error('Error fetching data:', error))
+    setisInfoVisibleStatistic(!isInfoVisibleStatistic)
 
-    
+    }
+
+    console.log(genreData);
     return(
     <PageContainer>
+        {console.log(setNestedData)}
 
         <Heading>
             Statistics
         </Heading>
-        <PageButton onClick={handleGenreQuery}>
-            Show the Number of Genres Available
-        </PageButton>
-        {
-            displayGenre ? 
-                
+
+        <LeftAlignedContainer>
+        <AllStatisticsContainer>
+            <PageButton onClick={handleAggregationQuery}>
+            Highest average single player game difficulty for all Genres
+            </PageButton>
+            <InfoGenreNested isVisible={isInfoVisibleAggregated}>
+            { nestedData ? nestedData : null}
+            </InfoGenreNested>
+            
+            </AllStatisticsContainer> 
+       
             <AllStatisticsContainer>
-            {Array.isArray(genreData) ? (
-                    genreData.map(genre => (
+            <PageButton onClick={handleGenreStatisticQuery}>
+            Average genre difficulty for single player games
+            </PageButton>
+
+            <InfoGenreStatistic isVisible={isInfoVisibleStatistic}>
+            {Array.isArray(havingData) ? (
+                    havingData.map(genre => (
                         <AllGamesStatistic
                             genreTitle={genre[0]}
                             genreNumber={genre[1]}
@@ -110,13 +158,33 @@ export const Statistics = () => {
                     ) : (
                     <p>Loading...</p>
                     )} 
-            <AllGamesStatistic />
-            <AllGamesStatistic />
-            </AllStatisticsContainer> : 
-            null
-        }
-        <Projection />
+            </InfoGenreStatistic>
+            
 
+            </AllStatisticsContainer> 
+
+            <AllStatisticsContainer>
+
+            <PageButton onClick={handleGenreQuery}>
+            Show the number of genres available 
+            </PageButton>
+
+            <Info isVisible={isInfoVisible}>
+            {Array.isArray(genreData) ? (
+                    genreData.map(genre => (
+                        <AllGamesStatistic
+                            genreTitle={genre[0]}
+                            genreNumber={genre[1]}
+                        />
+    
+                    ))
+            ) : null} 
+
+            </Info>
+            
+
+            </AllStatisticsContainer> 
+        </LeftAlignedContainer>
     </PageContainer>
         
     )

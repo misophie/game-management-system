@@ -38,6 +38,13 @@ router.get('/projectionQuery', async (req, res) => {
     res.json({data: tableContent});
 });
 
+router.get('/nestedQuery', async (req, res) => {
+    // need to get some things such as the table that it is querying from, and the list of attributes it needs 
+    const tableContent = await appService.getNestedAggregationQuery();
+    
+    res.json({data: tableContent});
+});
+
 router.get('/games', async (req, res) => {
     const tableContent = await appService.fetchAllGamesFromDb();
     res.json({data: tableContent});
