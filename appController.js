@@ -98,7 +98,7 @@ router.post("/update-user-bio", async (req, res) => {
     const { newBio, email } = req.body;
     const updateResult = await appService.updateUser(newBio, email);
     if (updateResult) {
-        res.json({ success: true });
+        res.json({ success: updateResult});
     } else {
         res.status(500).json({ success: false });
     }
