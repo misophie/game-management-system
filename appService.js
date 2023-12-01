@@ -129,15 +129,15 @@ async function getGamePublisher() {
   });
 }
 
-async function insertNewUser(username, pword) {
+async function insertNewGame(gameID, title, genre, releaseDate, platform) {
   return await withOracleDB(async (connection) => {
     const result = await connection.execute(
-      `INSERT INTO DEMOTABLE (id, name) VALUES (:id, :name)`,
-      [id, name],
+      `INSERT INTO Game (gameID, title, genre, releaseDate, platform, publisherID) VALUES (:gameID, :title, :genre, :releaseDate, :platform)`,
+      [gameID, title, genre, releaseDate, platform],
       { autoCommit: true }
     );
 
-    return result.rowsAffected && result.rowsAffected > 0;
+    return true;
   }).catch(() => {
     return false;
   });
@@ -226,6 +226,17 @@ async function countPublishersWithGamestable() {
     return result.rows[0][0];
   }).catch(() => {
     return -1;
+  });
+}
+
+
+async function getAllUser(email, dob) {
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(`SELECT * FROM Player`);
+    return result.rows;
+
+  }).catch(() => {
+    return false;
   });
 }
 
@@ -347,6 +358,8 @@ module.exports = {
     getAllAttributesOfTable,
     projectionQuery,
     getNestedAggregationQuery,
+    insertNewGame,
+    getAllUser,
     // initiateDemotable, 
     // insertDemotable, 
     // updateNameDemotable, 

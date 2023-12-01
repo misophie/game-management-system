@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState} from "react";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import DummyImage from "../images/300.png";
@@ -82,7 +82,7 @@ const PageButton = styled.button`
 export const PlayerProfile = () => {
 
     const [editable, setEditable] = useState(false);
-    const [text, setText] = useState('Click the button to edit me!');
+    const [text, setText] = useState('Click here to edit!');
     const [data, setData] = useState('');
 
     // To find passed in information about which user has logged in
@@ -99,7 +99,6 @@ export const PlayerProfile = () => {
     
     const { userInfo } = profileData;
     const email = userInfo[0][1];
-
 
     // handler functions
     const handleEditClick = () => {
@@ -136,6 +135,7 @@ export const PlayerProfile = () => {
                 Email: {userInfo[0][1]}
                 </Text>
                 <Text>
+                    
                 Bio:<EditableText text={text} isEditable={editable} onEdit={handleEditClick} onSave={handleSave} />
                 <PageButton onClick={handleEditClick}>Edit button </PageButton>
                 </Text>

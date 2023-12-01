@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { ColumnTable } from "../components/ColumnTable";
 
 const PageContainer = styled.div`
     display: flex;
@@ -67,10 +68,18 @@ const Padding = styled.div`
     padding-bottom: 0.1cm
 `
 
+const ColumnContainer = styled.div`
+    display: flex;
+    width: 50%;
+    padding: 20px;
+
+`
+
 export const SignIn = () => {
     const [email, setEmail] = useState('');
     const [data, setData] = useState(false);
     const [profile, setProfile] = useState(null);
+    const [availableUser, setAvailableUser] = useState([]);
 
     const navigate = useNavigate();
 
@@ -93,7 +102,18 @@ export const SignIn = () => {
             .catch(error => console.error('Error fetching data:', error));
     }
 
-    console.log(profile)
+    // Fetch table names when the component mounts
+    useEffect(() => {
+        axios.get('http://localhost:55001/all-users')
+        .then(response => {
+            const secondValues = response.data.data?.map(array => array[1]);
+            console.log(secondValues)
+            setAvailableUser(response.data.data);
+            
+        })
+        .catch(error => console.error('Error fetching tables:', error));
+    }, []);
+
 
     const handlePlayerProfileClick = () => {
         navigate("/player-profile", { state: {userInfo : profile} });
@@ -101,7 +121,13 @@ export const SignIn = () => {
 
     return(
         <PageContainer>
-            <Title>Please sign into your account or sign up if you don't already have one.</Title>
+            <Title>Here are all your accounts, choose one to sign in and you can further modify your profiles!</Title>
+
+            <ColumnContainer>
+            <ColumnTable titles={["id", "email", "date", "rank", "avatar", "bio"]} data={availableUser} />
+            </ColumnContainer>
+
+            
             <InnerContainer>
                 <Text>Email:</Text>
                 <InputTextBox

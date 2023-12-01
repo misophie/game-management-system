@@ -83,6 +83,11 @@ router.get("/current-user", async (req, res) => {
     res.json({data:user});
 });
 
+router.get("/all-users", async (req, res) => {
+    const user = await appService.getAllUser()
+    res.json({data:user});
+});
+
 // POST REQUESTS 
 router.post("/insert-new-user", async (req, res) => {
     const { email, dob } = req.body;
@@ -98,6 +103,16 @@ router.post("/update-user-bio", async (req, res) => {
     const { newBio, email } = req.body;
     const updateResult = await appService.updateUser(newBio, email);
     if (updateResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/insert-new-game", async (req, res) => {
+    const { gameID, title, genre, releaseDate, platform} = req.body;
+    const insertResult = await appService.insertNewGame(gameID, title, genre, releaseDate, platform);
+    if (insertResult) {
         res.json({ success: true });
     } else {
         res.status(500).json({ success: false });
