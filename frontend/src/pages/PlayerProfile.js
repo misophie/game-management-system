@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import DummyImage from "../images/300.png";
 import { LeaderboardComponent } from "../components/LeaderboardComponent";
@@ -84,43 +85,44 @@ export const PlayerProfile = () => {
     const [text, setText] = useState('Click the button to edit me!');
     const [data, setData] = useState('');
 
+    // To find passed in information about which user has logged in
+    const location = useLocation();
+    const profileData = location.state;
+
+    if (!profileData){
+        return(
+            <div>
+                Please sign in!
+            </div>
+        )
+    }
+    
+    const { userInfo } = profileData;
+    const email = userInfo[0][1];
+
+
+    // handler functions
     const handleEditClick = () => {
         setEditable(!editable);
     };
 
     const handleSave = (editedText) => {
-        // sets the oldBio prior to the change
-        // const userInfo =  {
-        //     oldBio: text,
-        //     newBio: text,
-        // }
-
         setText(editedText);
         setEditable(false);
 
-        // userInfo.newBio = editedText;
         const userInfo =  {
-            newBio: editedText
+            newBio: editedText,
+            email: email
         }
-  
-        // Make a POST request to the backend
+
         axios.post('http://localhost:55001/update-user-bio', userInfo)
-            .then(response => {
-            // Assuming the response contains the updated data
-            setData(response.data["data"]);
-            })
-            .catch(error => console.error('Error fetching data:', error));
+        .then(response => {
+        // Assuming the response contains the updated data
+        setData(response.data["data"]);
+        })
+        .catch(error => console.error('Error fetching data:', error));
 
-        console.log("new bio");
-        console.log(data);
     };
-
-    useEffect(() => {
-        // Fetch data from Express backend
-        axios.get('http://localhost:55001/current-player')
-          .then(response => setData(response.data["data"]))
-          .catch(error => console.error('Error fetching data:', error));
-      }, []);
 
     return(
         <PlayerContainer>
@@ -131,13 +133,12 @@ export const PlayerProfile = () => {
 
             <PlayerDescription>
                 <Text>
-                Username: zhanginc
+                Email: {userInfo[0][1]}
                 </Text>
-                <div>
+                <Text>
                 Bio:<EditableText text={text} isEditable={editable} onEdit={handleEditClick} onSave={handleSave} />
                 <PageButton onClick={handleEditClick}>Edit button </PageButton>
-                </div>
-              
+                </Text>
                 
                 <Text>
                 

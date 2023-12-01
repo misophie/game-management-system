@@ -5,8 +5,9 @@ import { PlayerProfile } from "./pages/PlayerProfile";
 import { AllGames } from "./pages/AllGames";
 import { NavigationBar } from "./components/Navbar";
 import { MultiplayerGame } from "./pages/MultiplayerGame";
-import { SignIn } from "../src/pages/SignIn";
-import { SignUp } from "../src/pages/SignUp";
+import { SignIn } from "./pages/SignIn";
+import { SignUp } from "./pages/SignUp";
+import { Statistics } from "./pages/Statistics";
 
 function App() {
   return (
@@ -17,8 +18,9 @@ function App() {
           <Route path="/games" element={<AllGames />} />
           <Route path="/single-player-game" element={<SinglePlayerGame />} />
           <Route path="/multi-player-game" element={<MultiplayerGame/>} />
-          <Route path="/sign-in-page" element={<SignIn />} />
+          <Route path="/" element={<SignIn />} />
           <Route path="/sign-up-page" element={<SignUp />} />
+          <Route path="/statistics" element={<Statistics />} />
       </Routes>
     </div>
   );

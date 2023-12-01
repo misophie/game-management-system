@@ -24,7 +24,8 @@ router.get('/games', async (req, res) => {
 });
 
 router.get('/publishers', async(req, res) => {  
-    const tableContent = await appService.getAllPublishersGames();
+    const { selectedOption } = req.query;
+    const tableContent = await appService.getAllPublishersGames(selectedOption);
     res.json({data:tableContent});
 });
 
@@ -67,8 +68,8 @@ router.post("/insert-new-user", async (req, res) => {
 });
 
 router.post("/update-user-bio", async (req, res) => {
-    const { newBio } = req.body;
-    const updateResult = await appService.updateUser(newBio);
+    const { newBio, email } = req.body;
+    const updateResult = await appService.updateUser(newBio, email);
     if (updateResult) {
         res.json({ success: true });
     } else {
