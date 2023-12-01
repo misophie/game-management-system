@@ -63,15 +63,29 @@ async function getAllTables() {
 async function getAllAttributesOfTable(selectedTable) {
 
   return await withOracleDB(async (connection) => {
-    const result = await connection.execute(
-      `select * from :selectedTableFinal`,
-      [selectedTable],
-      { autoCommit: true }
-    );
+    const query = `select * from ${selectedTable}`;
+
+    const result = await connection.execute(query);
     
     const rows = result;
     return rows;
-    // return rows;
+  }).catch(() => {
+    return [];
+  });
+
+}
+
+async function projectionQuery(selectedTable, queryAttributes) {
+  // selected table is a string 
+  // queryAttributes is an array 
+
+  const selectAttributes = queryAttributes.join(', ');
+  const query = `SELECT ${selectAttributes} FROM ${selectedTable}`;
+
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(query);
+    const rows = result;
+    return rows;
   }).catch(() => {
     return [];
   });
@@ -316,6 +330,7 @@ module.exports = {
     currentUser,
     getAllTables,
     getAllAttributesOfTable,
+    projectionQuery,
     // initiateDemotable, 
     // insertDemotable, 
     // updateNameDemotable, 

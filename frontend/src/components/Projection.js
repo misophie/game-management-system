@@ -7,6 +7,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
+import { Dropdown } from './DropdownComponent';
+import { ColumnTable } from './ColumnTable';
 
 // Styled Components
 const Container = styled.div`
@@ -20,24 +22,6 @@ const Container = styled.div`
 const Heading = styled.h1`
   text-align: center;
   color: #333;
-`;
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const Label = styled.label`
-  margin-bottom: 10px;
-`;
-
-const Select = styled.select`
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 20px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
 `;
 
 const Button = styled.button`
@@ -54,6 +38,8 @@ export const Projection = () => {
   const [tables, setTables] = useState([]);
   const [attributes, setAttributes] = useState([]);
   const [selectedTable, setSelectedTable] = useState('game');
+  const [queryAttributes, setQueryAttributes] = useState([]);
+  const [query, setQuery] = useState([]);
 
   // Fetch table names when the component mounts
   useEffect(() => {
@@ -65,45 +51,48 @@ export const Projection = () => {
 
   // Fetch table names when the component mounts
   useEffect(() => {
-    axios.get('http://localhost:55001/tableattributes', {params: {selectedTable: selectedTable}})
+    axios.get('http://localhost:55001/attributes', {params: {selectedTable: selectedTable}})
       .then(response => setAttributes(response.data.data.metaData))
       .catch(error => console.error('Error fetching tables:', error));
-  });
+  }, [selectedTable]);
+
+  useEffect(() => {
+     setQueryAttributes([])
+  }, [selectedTable]);
+
+
+  const attributeArray = attributes.map(dictionary => dictionary.name)
   
-//   attributes.map(dictionary => dictionary.name)
+  const addAttribute = (attributeName) => {
+    setQueryAttributes(prevAttributes => [...prevAttributes, attributeName]);
+  };  
 
-  const handleTableSelection = (event) => {
-    setSelectedTable(event.target.value);
-  };
-
-  console.log(tables)
-
-  
-
-  const handleFormSubmit = (event) => {
-    event.preventDefault();
-    if (selectedTable) {
-      // Perform further actions, e.g., fetching attributes or making a query
-      console.log(`User selected table: ${selectedTable}`);
-    } else {
-      console.log('Please select a table.');
+  const handleClick = () => {
+    const load = {
+        selectedTable : selectedTable,
+        queryAttributes: queryAttributes
     }
-  };
+    axios.get('http://localhost:55001/projectionQuery', {params: load})
+      .then(response => setQuery(response.data.data.rows))
+      .catch(error => console.error('Error fetching tables:', error));
+  }
 
   return (
+    // when there is attributes then u can add to this 
     <Container>
+        
       <Heading>Select a Table to Query</Heading>
-      <Form onSubmit={handleFormSubmit}>
-        <Label>Select a table:</Label>
-        <Select onChange={handleTableSelection}>
-          <option value="">Select</option>
-          {tables ? tables.map(table => (
-            <option >{table[0]}</option>
-          )) : <div>Loading..</div>}
-        </Select>
+      <Dropdown options={tables} onSelect={setSelectedTable} projection={true}/>
+      {attributeArray ? 
+      <Dropdown options={attributeArray} onSelect={addAttribute} projection={true} attribute={true} /> : 
+      null}
+      
+      <Button onClick={handleClick}>Get Tables</Button>
+      {console.log(query)}
+      {query && queryAttributes ? 
+      <ColumnTable titles={queryAttributes} data={query} />
+      : null}
 
-        <Button type="submit">Submit</Button>
-      </Form>
     </Container>
   );
 }

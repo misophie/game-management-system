@@ -42,7 +42,7 @@ const DropdownOption = styled.li`
   }
 `;
 
-export const Dropdown = ({ options, onSelect }) => {
+export const Dropdown = ({ options, onSelect, projection = false, attribute = false}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
 
@@ -53,18 +53,20 @@ export const Dropdown = ({ options, onSelect }) => {
   const handleOptionClick = (option) => {
     setSelectedOption(option);
     setIsOpen(false);
-    onSelect(option.label);
+    onSelect(projection ? (attribute ? option : option[0]) : option.label);
   }; 
+
+
 
   return (
     <DropdownContainer>
       <DropdownToggle onClick={toggleDropdown}>
-        {selectedOption ? selectedOption.label : 'Select an option'}
+        {selectedOption ? (projection ? (attribute ? selectedOption : selectedOption[0]) : selectedOption.label)  : 'Select an option'}
       </DropdownToggle>
       <DropdownOptions isOpen={isOpen}>
         {options ? options.map((option) => (
           <DropdownOption key={option.value} onClick={() => handleOptionClick(option)}>
-            {option.label}
+            {projection ? (attribute ? option : option[0]) : option.label}
           </DropdownOption>
         )) : null}
       </DropdownOptions>
