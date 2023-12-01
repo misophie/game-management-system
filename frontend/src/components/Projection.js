@@ -12,11 +12,14 @@ import { ColumnTable } from './ColumnTable';
 
 // Styled Components
 const Container = styled.div`
-  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  width: 800px;
   margin: 0 auto;
   padding: 20px;
   background-color: #f4f4f4;
   border-radius: 8px;
+  align-items:center;
 `;
 
 const Heading = styled.h1`
@@ -31,6 +34,14 @@ const Button = styled.button`
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  margin-top: 20px;
+  margin-bottom: 20px;
+`;
+
+const DropdownContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
 `;
 
 // Main App Component
@@ -82,10 +93,14 @@ export const Projection = () => {
     <Container>
         
       <Heading>Select a Table to Query</Heading>
+
+      <DropdownContainer>
       <Dropdown options={tables} onSelect={setSelectedTable} projection={true}/>
       {attributeArray ? 
       <Dropdown options={attributeArray} onSelect={addAttribute} projection={true} attribute={true} /> : 
       null}
+      </DropdownContainer>
+      
       
       <Button onClick={handleClick}>Get Tables</Button>
       {console.log(query)}

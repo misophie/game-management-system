@@ -13,6 +13,14 @@ const PageContainer = styled.div`
   min-height: 100vh;
   height: 100%;
 `
+
+const FilterContainer = styled.div`
+    display: flex;
+    gap: 30px;
+    margin-bottom: 30px;
+    align-items: center;
+
+`
 const AllGameContainer = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -24,6 +32,13 @@ const Title = styled.text`
     color: #333;
     font-weight: bold;  
 `
+
+const Text = styled.text`
+    font-size: 20px;
+    color: #333;
+    font-weight: bold;  
+`
+
 const GameImage = styled.img`
     width: 300px;
     height: auto;
@@ -58,6 +73,7 @@ const GameTitle = ({key, title, img, gameType = false, genre, date, publisher, c
 export const AllGames = () => {
     const [data, setData] = useState('');
     const [selectedOption, setSelectedOption] = useState('');
+    const [queryAttributes, setQueryAttributes] = useState([]);
 
     const dropdownOptions = [
         { value: 1, label: 'Adventure RPG' },
@@ -66,19 +82,30 @@ export const AllGames = () => {
         { value: 4, label: 'MOBA' },
         { value: 5, label: 'FPS Shooter' },
       ];
+
+    const addAttribute = (attributeName) => {
+    setQueryAttributes(prevAttributes => [...prevAttributes, attributeName]);
+    };  
       
 
     useEffect(() => {
         // Fetch data from Express backend
-        axios.get('http://localhost:55001/publishers', {params: {selectedOption: selectedOption}})
+        axios.get('http://localhost:55001/publishers', {params: {selectedOption: queryAttributes}})
           .then(response => setData(response.data["data"]))
           .catch(error => console.error('Error fetching data:', error));
-      }, [selectedOption]);
+      }, [queryAttributes]);
+
+      
 
     
     return(
     <PageContainer>
-        <Dropdown options={dropdownOptions} onSelect={setSelectedOption}/>
+        <FilterContainer>
+        <Dropdown options={dropdownOptions} onSelect={addAttribute}/>
+        You have selected:
+        {queryAttributes ? queryAttributes.map(attribute => <Text>{attribute}</Text>) : null}
+        </FilterContainer>
+        
        
             <AllGameContainer>
             {Array.isArray(data) ? (
