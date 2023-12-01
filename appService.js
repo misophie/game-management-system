@@ -215,16 +215,76 @@ async function currentUser(email) {
 
 }
 
+async function getAllPublishersGames() {
+    return await withOracleDB(async(connection) => {
+    
+        // const result = await connection.execute('SELECT d.companyid, d.companyName, pb.PublisherID, pb.publisherName, g.GameID, Title, Genre, releaseDate, platform FROM developercompany d, develops dv, publisher pb, publishes p, game g WHERE pb.publisherID = p.publisherID AND g.gameID = p.gameID AND d.companyid = dv.companyid AND dv.gameid = g.gameid')
+        const result = await connection.execute('SELECT d.companyName, p.publisherName, game.GameID, game.Title, game.Genre, game.releaseDate, game.platform FROM game LEFT JOIN (SELECT * FROM develops INNER JOIN developercompany ON develops.companyid = developercompany.companyid) d ON d.gameId = game.gameId LEFT JOIN (SELECT * FROM publishes INNER JOIN publisher ON publishes.publisherid = publisher.publisherid) p ON p.gameId = game.gameId')
+
+        const rows = result.rows;
+        // console.log(rows);
+        const publisherGameData = rows.map(row => {
+            return {
+                companyName: row[0],
+                publisherName: row[1],
+                gameId: row[2],
+                title: row[3],
+                genre: row[4],
+                releaseDate: row[5],
+                platform: row[6]
+            };
+        });
+        return publisherGameData;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function getGenreStatistic() {
+    return await withOracleDB(async(connection) => {
+        const result = await connection.execute('select genre, count(*) as game_count from game group by genre')
+
+        const rows = result.rows;
+    
+        return rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function getGenreStatisticDifficulty() {
+    return await withOracleDB(async(connection) => {
+        const result = await connection.execute('SELECT g.genre, AVG(sg.difficulty) AS average_difficulty FROM game g JOIN singleplayergame sg ON g.gameid = sg.gameid GROUP BY g.genre')
+        const rows = result.rows;
+    
+        return rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+
+async function countPublishersWithGamestable() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(`SELECT count(*) FROM publisher pb, publishes p, game g WHERE pb.publisherID = p.publisherID AND g.gameID = p.gameID`);
+        return result.rows[0][0];
+    }).catch(() => {
+        return -1;
+    });
+}
+
 module.exports = {
-  testOracleConnection,
-  fetchAllGamesFromDb,
-  insertNewUser,
-  updateUser,
-  currentUser,
-  // initiateDemotable,
-  // insertDemotable,
-  // updateNameDemotable,
-  countGamestable,
-  getAllPublishersGames,
-  countPublishersWithGamestable,
+    testOracleConnection,
+    fetchAllGamesFromDb,
+    getGenreStatistic,
+    getGenreStatisticDifficulty,
+    insertNewUser,
+    updateUser,
+    currentUser,
+    // initiateDemotable, 
+    // insertDemotable, 
+    // updateNameDemotable, 
+    countGamestable,
+    getAllPublishersGames,
+    countPublishersWithGamestable
 };

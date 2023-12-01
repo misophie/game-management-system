@@ -1,3 +1,4 @@
+
 -- Drop existing tables
 
 drop table LeaderboardStatistic;
@@ -5,11 +6,12 @@ drop table Friend;
 drop table GamePlayer;
 drop table TeamPlayer;
 drop table GameTeam;
-drop table CompanyGame;
+drop table PublisherGame;
+drop table DeveloperGame;
 drop table Team;
 drop table Statistic;
 drop table Player;
-drop table Company;
+drop table DeveloperCompany;
 drop table Leaderboard;
 drop table MultiplayerGame;
 drop table Server;
@@ -17,7 +19,6 @@ drop table SinglePlayerGame;
 drop table Game;
 drop table Genre;
 drop table Publisher;
-
 
 -- Create tables
 
@@ -39,9 +40,7 @@ create table Game (
     genre varchar (20),
     releaseDate date,
     platform varchar (20),
-    publisherID int,
-    foreign key (genre) references Genre ON DELETE SET NULL,
-    foreign key (publisherID) references Publisher ON DELETE SET NULL
+    foreign key (genre) references Genre ON DELETE SET NULL
 );
 
 -- ISA Game
@@ -73,9 +72,9 @@ create table Leaderboard (
     foreign key (gameID) references Game ON DELETE CASCADE
 );
 
-create table Company (
-    companyID int primary key,
-    companyName varchar (20) not null,
+create table DeveloperCompany (
+    developerID int primary key,
+    developerName varchar (20) not null,
     hqCity varchar (20)
 );
 
@@ -103,12 +102,21 @@ create table Team (
 
 -- RELATIONSHIPS
 
--- (Company) many-to-many (Game)
-create table CompanyGame (
-    companyID int,
+-- (DeveloperCompany) many-to-many (Game)
+create table DeveloperGame (
+    developerID int,
     gameID int,
-    primary key (companyID, gameID),
-    foreign key (companyID) references Company,
+    primary key (developerID, gameID),
+    foreign key (developerID) references DeveloperCompany,
+    foreign key (gameID) references Game
+);
+
+-- (Publisher) one-to-many (Game)
+create table PublisherGame (
+    publisherID int,
+    gameID int unique, 
+    primary key (publisherID, gameID),
+    foreign key (publisherID) references Publisher,
     foreign key (gameID) references Game
 );
 
@@ -176,26 +184,26 @@ insert into Genre (genre, ageRestriction) values ('Strategy', 'E');
 
 
 
-insert into Game (gameID, title, genre, releaseDate, platform, publisherID) 
-values (1, 'Maple Story', 'Adventure RPG', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'iOS', 1);
-insert into Game (gameID, title, genre, releaseDate, platform, publisherID) 
-values (2, 'League of Legends', 'MOBA', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'Microsoft Windows', 1);
-insert into Game (gameID, title, genre, releaseDate, platform, publisherID) 
-values (3, 'Valorant', 'FPS Shooter', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'Microsoft Windows', 2);
-insert into Game (gameID, title, genre, releaseDate, platform, publisherID) 
-values (4, 'TeamFight Tactics', 'Strategy', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'Microsoft Windows', 2);
-insert into Game (gameID, title, genre, releaseDate, platform, publisherID) 
-values (5, 'Genshin Impact', 'Adventure RPG', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'Microsoft Windows', 3);
-insert into Game (gameID, title, genre, releaseDate, platform, publisherID) 
-values (6, 'The Witcher 3: Wild Hunt', 'Adventure RPG', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'PC', 3);
-insert into Game (gameID, title, genre, releaseDate, platform, publisherID) 
-values (7, 'Assassins Creed Valhalla', 'Action RPG', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'Xbox', 4);
-insert into Game (gameID, title, genre, releaseDate, platform, publisherID) 
-values (8, 'The Legend of Zelda: Breath of the Wild', 'Adventure RPG', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'Nintendo Switch', 4);
-insert into Game (gameID, title, genre, releaseDate, platform, publisherID) 
-values (9, 'Cyberpunk 2077', 'Action RPG', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'PC', 5);
-insert into Game (gameID, title, genre, releaseDate, platform, publisherID) 
-values (10, 'Red Dead Redemption 2', 'Action RPG', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'PlayStation', 5);
+insert into Game (gameID, title, genre, releaseDate, platform) 
+values (1, 'Maple Story', 'Adventure RPG', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'iOS');
+insert into Game (gameID, title, genre, releaseDate, platform) 
+values (2, 'League of Legends', 'MOBA', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'Microsoft Windows');
+insert into Game (gameID, title, genre, releaseDate, platform) 
+values (3, 'Valorant', 'FPS Shooter', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'Microsoft Windows');
+insert into Game (gameID, title, genre, releaseDate, platform) 
+values (4, 'TeamFight Tactics', 'Strategy', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'Microsoft Windows');
+insert into Game (gameID, title, genre, releaseDate, platform) 
+values (5, 'Genshin Impact', 'Adventure RPG', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'Microsoft Windows');
+insert into Game (gameID, title, genre, releaseDate, platform) 
+values (6, 'The Witcher 3: Wild Hunt', 'Adventure RPG', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'PC');
+insert into Game (gameID, title, genre, releaseDate, platform) 
+values (7, 'Assassins Creed Valhalla', 'Action RPG', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'Xbox');
+insert into Game (gameID, title, genre, releaseDate, platform) 
+values (8, 'The Legend of Zelda: Breath of the Wild', 'Adventure RPG', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'Nintendo Switch');
+insert into Game (gameID, title, genre, releaseDate, platform) 
+values (9, 'Cyberpunk 2077', 'Action RPG', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'PC');
+insert into Game (gameID, title, genre, releaseDate, platform) 
+values (10, 'Red Dead Redemption 2', 'Action RPG', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'PlayStation');
 
 
 insert into SinglePlayerGame (gameID, difficulty) values (6,  6);
@@ -231,11 +239,11 @@ insert into Leaderboard (leaderboardID, visibility, timeFrame, gameID) values (9
 insert into Leaderboard (leaderboardID, visibility, timeFrame, gameID) values (10, 1, '2023-10-12 - 2023-10-19', 10);
 
 
-insert into Company (companyID, companyName, hqCity) values (1, 'Awesome Games', 'Calgary');
-insert into Company (companyID, companyName, hqCity) values (2, 'Cool Games', 'Vancouver');
-insert into Company (companyID, companyName, hqCity) values (3, 'Machine Games', 'Toronto');
-insert into Company (companyID, companyName, hqCity) values (4, 'Riot', 'LA');
-insert into Company (companyID, companyName, hqCity) values (5, 'Blizzard', 'NYC');
+insert into DeveloperCompany (developerID, developerName, hqCity) values (1, 'Awesome Games', 'Calgary');
+insert into DeveloperCompany (developerID, developerName, hqCity) values (2, 'Cool Games', 'Vancouver');
+insert into DeveloperCompany (developerID, developerName, hqCity) values (3, 'Machine Games', 'Toronto');
+insert into DeveloperCompany (developerID, developerName, hqCity) values (4, 'Riot', 'LA');
+insert into DeveloperCompany (developerID, developerName, hqCity) values (5, 'Blizzard', 'NYC');
 
 
 insert into Player (playerID, playerEmail, dateOfBirth, rank, avatar, bio) values (1, 'grace@gmail.com', TO_DATE ('10-OCT-2002', 'DD-MM-YYYY'), 1, '/path/to/avatar1.jpg', 'Gamer, explorer, and thrill-seeker.');
@@ -259,16 +267,28 @@ insert into Team (teamID, creationDate) values (4, TO_DATE ('13-DEC-2022', 'DD-M
 insert into Team (teamID, creationDate) values (5, TO_DATE ('10-MAY-2013', 'DD-MM-YYYY'));
 
 
-insert into CompanyGame (companyID, gameID) values (1, 1);
-insert into CompanyGame (companyID, gameID) values (1, 2);
-insert into CompanyGame (companyID, gameID) values (2, 3);
-insert into CompanyGame (companyID, gameID) values (2, 4);
-insert into CompanyGame (companyID, gameID) values (3, 5);
-insert into CompanyGame (companyID, gameID) values (3, 6);
-insert into CompanyGame (companyID, gameID) values (4, 7);
-insert into CompanyGame (companyID, gameID) values (4, 8);
-insert into CompanyGame (companyID, gameID) values (5, 9);
-insert into CompanyGame (companyID, gameID) values (5, 10);
+insert into DeveloperGame (developerID, gameID) values (1, 1);
+insert into DeveloperGame (developerID, gameID) values (1, 2);
+insert into DeveloperGame (developerID, gameID) values (2, 3);
+insert into DeveloperGame (developerID, gameID) values (2, 4);
+insert into DeveloperGame (developerID, gameID) values (3, 5);
+insert into DeveloperGame (developerID, gameID) values (3, 6);
+insert into DeveloperGame (developerID, gameID) values (4, 7);
+insert into DeveloperGame (developerID, gameID) values (4, 8);
+insert into DeveloperGame (developerID, gameID) values (5, 9);
+insert into DeveloperGame (developerID, gameID) values (5, 10);
+
+
+insert into PublisherGame (publisherID, gameID) values (1, 1);
+insert into PublisherGame (publisherID, gameID) values (1, 2);
+insert into PublisherGame (publisherID, gameID) values (2, 3);
+insert into PublisherGame (publisherID, gameID) values (2, 4);
+insert into PublisherGame (publisherID, gameID) values (3, 5);
+insert into PublisherGame (publisherID, gameID) values (3, 6);
+insert into PublisherGame (publisherID, gameID) values (4, 7);
+insert into PublisherGame (publisherID, gameID) values (4, 8);
+insert into PublisherGame (publisherID, gameID) values (5, 9);
+insert into PublisherGame (publisherID, gameID) values (5, 10);
 
 
 insert into LeaderboardStatistic (leaderboardID, playerID, rank) values (1, 1, 200);
@@ -309,4 +329,3 @@ insert into Friend (playerID1, playerID2) values (2, 3);
 insert into Friend (playerID1, playerID2) values (3, 4);
 insert into Friend (playerID1, playerID2) values (4, 5);
 insert into Friend (playerID1, playerID2) values (5, 3);
-
