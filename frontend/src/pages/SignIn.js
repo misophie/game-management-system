@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
+import React, { useState } from "react";
 import axios from "axios";
+import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 const PageContainer = styled.div`
     display: flex;
@@ -42,17 +43,6 @@ const InputTextBox = styled.input`
     outline: none
 `
 
-const SignUpButton = styled.button`
-    background-color: #007bff;
-    color: white; 
-    font-size: 16px;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 50%
-`
-
 const SignInButton = styled.button`
     background-color: #007bff;
     color: white; 
@@ -63,69 +53,68 @@ const SignInButton = styled.button`
     cursor: pointer;
     width: 50%
 `
-
+const SignUpButton = styled.button`
+    background-color: #007bff;
+    color: white; 
+    font-size: 16px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 50%
+`
 const Padding = styled.div`
     padding-bottom: 0.1cm
 `
 
-export const SignUp = () => {
-    const [data, setData] = useState(false);
-    const [dob, setDOB] = useState('')
+export const SignIn = () => {
     const [email, setEmail] = useState('');
+    const [data, setData] = useState(false);
+
+    const navigate = useNavigate();
+
+    const redirSignUp = () => {
+        navigate("/sign-up-page")
+    }
 
     const handleClick = () => {
-        console.log('handleClick called');
         // !! SANITIZE INPUT BEFORE POSTING OR WHEN MAKING REQUEST TO BACKEND
-        // particularly, the date input
-            
-        // Sample data to be sent in the POST request
-        // const postData = {
-        //     user: "f",
-        //     pword: "f"
-        // }; 
-    
         const userInfo =  {
             email: email,
-            dob: dob
         }
   
-        // Make a POST request to the backend
-        axios.post('http://localhost:55001/insert-new-user', userInfo)
+        axios.get('http://localhost:55001/current-user', {params: userInfo})
             .then(response => {
             // Assuming the response contains the updated data
-            setData(response["data"]["success"])
+            setData(response["data"]["data"].length >= 1)
             })
             .catch(error => console.error('Error fetching data:', error));
-    
     }
 
     return(
         <PageContainer>
-            <Title>Please fill out the information below:</Title>
+            <Title>Please sign into your account or sign up if you don't already have one.</Title>
             <InnerContainer>
                 <Text>Email:</Text>
                 <InputTextBox
                     type = "text"
-                    id = 'user'
-                    placeholder="Enter username here"
+                    placeholder="Enter text here"
                     onChange={(e) => setEmail(e.target.value)}/>
             </InnerContainer>
-            <InnerContainer>
-                <Text>Date of Birth (DD-MM-YYYY):</Text>
-                    <InputTextBox
-                        type = "text"
-                        id = 'dob'
-                        placeholder="Enter birthday here"
-                        onChange={(e) => setDOB(e.target.value)}/>
-            </InnerContainer>
-            <SignUpButton onClick={handleClick}>Sign Up</SignUpButton>
-            {data ? 
-            <div>
-                Sucessfully signed up! Please sign in now.
-            </div> : 
-            <div>      
-            </div>
+            {
+                data ? 
+                <div>
+                Successfully signed in! 
+                </div> : 
+                <div>
+                </div>
             }
+        
+            <SignInButton onClick={handleClick}>Sign In</SignInButton>
+            <Padding></Padding>
+            <Text>Never logged in before?</Text>
+            <Padding></Padding>
+            <SignUpButton onClick={redirSignUp}>Sign up instead</SignUpButton>
         </PageContainer>
     )
 }

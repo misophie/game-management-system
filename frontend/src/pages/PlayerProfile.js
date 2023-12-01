@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import DummyImage from "../images/300.png";
 import { LeaderboardComponent } from "../components/LeaderboardComponent";
+import { EditableText } from "../components/TextEditable";
+import axios from "axios";
 
 const PlayerContainer = styled.div`
   display: flex;
@@ -65,7 +67,7 @@ const AddFriendInput = styled.input`
     border-radius: 5px;
     outline: none;
 `
-const FriendButton = styled.button`
+const PageButton = styled.button`
   background-color: #007bff;
   color: white; 
   font-size: 16px;
@@ -77,6 +79,49 @@ const FriendButton = styled.button`
 `
 
 export const PlayerProfile = () => {
+
+    const [editable, setEditable] = useState(false);
+    const [text, setText] = useState('Click the button to edit me!');
+    const [data, setData] = useState('');
+
+    const handleEditClick = () => {
+        setEditable(!editable);
+    };
+
+    const handleSave = (editedText) => {
+        // sets the oldBio prior to the change
+        // const userInfo =  {
+        //     oldBio: text,
+        //     newBio: text,
+        // }
+
+        setText(editedText);
+        setEditable(false);
+
+        // userInfo.newBio = editedText;
+        const userInfo =  {
+            newBio: editedText
+        }
+  
+        // Make a POST request to the backend
+        axios.post('http://localhost:55001/update-user-bio', userInfo)
+            .then(response => {
+            // Assuming the response contains the updated data
+            setData(response.data["data"]);
+            })
+            .catch(error => console.error('Error fetching data:', error));
+
+        console.log("new bio");
+        console.log(data);
+    };
+
+    useEffect(() => {
+        // Fetch data from Express backend
+        axios.get('http://localhost:55001/current-player')
+          .then(response => setData(response.data["data"]))
+          .catch(error => console.error('Error fetching data:', error));
+      }, []);
+
     return(
         <PlayerContainer>
             <AvatarLeaderboardContainer>
@@ -88,8 +133,14 @@ export const PlayerProfile = () => {
                 <Text>
                 Username: zhanginc
                 </Text>
+                <div>
+                Bio:<EditableText text={text} isEditable={editable} onEdit={handleEditClick} onSave={handleSave} />
+                <PageButton onClick={handleEditClick}>Edit button </PageButton>
+                </div>
+              
+                
                 <Text>
-                Bio: I am an avid gamer love gamingI am an avid gamer
+                
                 </Text>
                 <AllFriendContainer>
                 <Text>
@@ -107,7 +158,7 @@ export const PlayerProfile = () => {
                 <AddFriendInput 
                     type="text"
                     placeholder="Enter text here"/>
-                <FriendButton>Add Friend</FriendButton>
+                <PageButton>Add Friend</PageButton>
                 </AddFriendContainer>
             </PlayerDescription>
 

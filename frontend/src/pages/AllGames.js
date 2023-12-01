@@ -104,7 +104,6 @@ export const AllGames = () => {
     }, []);
 
     
-
     return(
     <PageContainer>
         <Heading>
