@@ -7,6 +7,8 @@ const router = express.Router();
 // API endpoints
 // Modify or extend these routes based on your project's needs.
 // these are things that will be called by the frontend 
+
+// GET REQUESTS
 router.get('/check-db-connection', async (req, res) => {
     const isConnect = await appService.testOracleConnection();
     if (isConnect) {
@@ -35,6 +37,36 @@ router.get('/publisherscount', async(req, res) => {
     const tableContent = await appService.countPublishersWithGamestable();
     res.json({data:tableContent});
 });
+
+router.get("/current-user", async (req, res) => {
+    const { email } = req.query;
+    const user = await appService.currentUser(email);
+    res.json({data:user});
+});
+
+// POST REQUESTS 
+router.post("/insert-new-user", async (req, res) => {
+    const { email, dob } = req.body;
+    const insertResult = await appService.insertNewUser(email, dob);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/update-user-bio", async (req, res) => {
+    const { newBio } = req.body;
+    const updateResult = await appService.updateUser(newBio);
+    if (updateResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+
+
 
 // router.post("/initiate-demotable", async (req, res) => {
 //     const initiateResult = await appService.initiateDemotable();

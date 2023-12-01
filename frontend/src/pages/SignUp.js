@@ -69,8 +69,9 @@ const Padding = styled.div`
 `
 
 export const SignUp = () => {
-    const [data, setData] = useState('');
-    const [userInfo, postData] = useState('')
+    const [data, setData] = useState(false);
+    const [dob, setDOB] = useState('')
+    const [email, setEmail] = useState('');
 
     const handleClick = () => {
         console.log('handleClick called');
@@ -83,66 +84,48 @@ export const SignUp = () => {
         //     pword: "f"
         // }; 
     
-        const postData = () => {
-            const user = document.getElementById('user').value;
-            const pword = document.getElementById('pword').value;
-            const dob = document.getElementById('dob').value;
-
-            console.log(user);
-            console.log(pword);
-            console.log(dob);
-
-            return {
-                user: user,
-                pword: pword,
-                dob: dob
-            }
+        const userInfo =  {
+            email: email,
+            dob: dob
         }
-        
-        console.log("User inputs:")
-        console.log(userInfo.user);
-        // console.log(pword);
-        // console.log(dob);
-
+  
         // Make a POST request to the backend
-        axios.post('http://localhost:55001/insert-new-user', postData)
+        axios.post('http://localhost:55001/insert-new-user', userInfo)
             .then(response => {
             // Assuming the response contains the updated data
-            setData(response.data["data"]);
+            setData(response["data"]["success"])
             })
             .catch(error => console.error('Error fetching data:', error));
     
-        console.log(data);
-
     }
-
-    
 
     return(
         <PageContainer>
             <Title>Please fill out the information below:</Title>
             <InnerContainer>
-                <Text>Username:</Text>
+                <Text>Email:</Text>
                 <InputTextBox
                     type = "text"
                     id = 'user'
-                    placeholder="Enter username here"/>
-            </InnerContainer>
-            <InnerContainer>
-                <Text>Password:</Text>
-                    <InputTextBox
-                        type = "text"
-                        id = 'pword'
-                        placeholder="Enter password here"/>
+                    placeholder="Enter username here"
+                    onChange={(e) => setEmail(e.target.value)}/>
             </InnerContainer>
             <InnerContainer>
                 <Text>Date of Birth (DD-MM-YYYY):</Text>
                     <InputTextBox
                         type = "text"
                         id = 'dob'
-                        placeholder="Enter birthday here"/>
+                        placeholder="Enter birthday here"
+                        onChange={(e) => setDOB(e.target.value)}/>
             </InnerContainer>
             <SignUpButton onClick={handleClick}>Sign Up</SignUpButton>
+            {data ? 
+            <div>
+                Sucessfully signed up! Please sign in now.
+            </div> : 
+            <div>      
+            </div>
+            }
         </PageContainer>
     )
 }

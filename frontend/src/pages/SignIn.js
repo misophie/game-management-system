@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import axios from "axios";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
@@ -67,28 +68,49 @@ const Padding = styled.div`
 `
 
 export const SignIn = () => {
+    const [email, setEmail] = useState('');
+    const [data, setData] = useState(false);
+
     const navigate = useNavigate();
 
     const redirSignUp = () => {
         navigate("/sign-up-page")
     }
 
+    const handleClick = () => {
+        // !! SANITIZE INPUT BEFORE POSTING OR WHEN MAKING REQUEST TO BACKEND
+        const userInfo =  {
+            email: email,
+        }
+  
+        axios.get('http://localhost:55001/current-user', {params: userInfo})
+            .then(response => {
+            // Assuming the response contains the updated data
+            setData(response["data"]["data"].length >= 1)
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
+
     return(
         <PageContainer>
             <Title>Please sign into your account or sign up if you don't already have one.</Title>
             <InnerContainer>
-                <Text>Username:</Text>
+                <Text>Email:</Text>
                 <InputTextBox
                     type = "text"
-                    placeholder="Enter text here"/>
+                    placeholder="Enter text here"
+                    onChange={(e) => setEmail(e.target.value)}/>
             </InnerContainer>
-            <InnerContainer>
-                <Text>Password:</Text>
-                    <InputTextBox
-                        type = "text"
-                        placeholder="Enter text here"/>
-            </InnerContainer>
-            <SignInButton>Sign In</SignInButton>
+            {
+                data ? 
+                <div>
+                Successfully signed in! 
+                </div> : 
+                <div>
+                </div>
+            }
+        
+            <SignInButton onClick={handleClick}>Sign In</SignInButton>
             <Padding></Padding>
             <Text>Never logged in before?</Text>
             <Padding></Padding>

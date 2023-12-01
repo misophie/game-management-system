@@ -68,9 +68,6 @@ export const AllGames = () => {
           .catch(error => console.error('Error fetching data:', error));
       }, []);
 
-      console.log(data[0].gameId);
-
-
 
     return(
     <PageContainer>
