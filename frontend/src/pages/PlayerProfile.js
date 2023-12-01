@@ -5,6 +5,7 @@ import DummyImage from "../images/300.png";
 import { LeaderboardComponent } from "../components/LeaderboardComponent";
 import { EditableText } from "../components/TextEditable";
 import axios from "axios";
+import { sanitizeHTML } from "../functions";
 
 const PlayerContainer = styled.div`
   display: flex;
@@ -111,7 +112,7 @@ export const PlayerProfile = () => {
         setEditable(false);
 
         const userInfo =  {
-            newBio: editedText,
+            newBio: sanitizeHTML(editedText),
             email: email
         }
 

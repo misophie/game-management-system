@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
+import { sanitizeHTML } from "../functions";
 
 const PageContainer = styled.div`
     display: flex;
@@ -73,20 +74,10 @@ export const SignUp = () => {
     const [dob, setDOB] = useState('')
     const [email, setEmail] = useState('');
 
-    const handleClick = () => {
-        console.log('handleClick called');
-        // !! SANITIZE INPUT BEFORE POSTING OR WHEN MAKING REQUEST TO BACKEND
-        // particularly, the date input
-            
-        // Sample data to be sent in the POST request
-        // const postData = {
-        //     user: "f",
-        //     pword: "f"
-        // }; 
-    
+    const handleClick = () => {    
         const userInfo =  {
-            email: email,
-            dob: dob
+            email: sanitizeHTML(email),
+            dob: sanitizeHTML(dob)
         }
   
         // Make a POST request to the backend
