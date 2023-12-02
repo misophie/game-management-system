@@ -83,6 +83,16 @@ router.get("/current-user", async (req, res) => {
     res.json({data:user});
 });
 
+router.get("/popular-game", async (req, res) => {
+    const user = await appService.getTitleGameForAllPlayers();
+    res.json({data:user});
+});
+
+router.get("/everyone-game", async (req, res) => {
+    const user = await appService.getGameRatedEforEveryone();
+    res.json({data:user});
+});
+
 // POST REQUESTS 
 router.post("/insert-new-user", async (req, res) => {
     const { email, dob } = req.body;
