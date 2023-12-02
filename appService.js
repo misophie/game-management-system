@@ -379,13 +379,16 @@ async function getTitleGameForAllPlayers() {
   });
 }
 
-async function getGameRatedEforEveryone() {
+async function getGameRatedEforEveryone(genreRating) {
   return await withOracleDB(async (connection) => {
       const result = await connection.execute(`
       SELECT ga.title, ga.genre
       FROM Genre ge
       JOIN Game ga ON ge.genre = ga.genre
-      WHERE ge.ageRestriction = 'E'`);
+      WHERE ge.ageRestriction =:genreRating`,
+      [genreRating],
+      {autoCommit: true}
+      );
 
       return result.rows;
   }).catch(() => {
