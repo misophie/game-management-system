@@ -129,6 +129,16 @@ router.post("/update-user-bio", async (req, res) => {
     }
 });
 
+router.post("/update-user-avatar", async (req, res) => {
+    const { avatar, email } = req.body;
+    const updateResult = await appService.updateUserAvatar(avatar, email);
+    if (updateResult) {
+        res.json({ success: updateResult});
+     } else {
+        res.status(500).json({ success: false });
+    }
+});
+
 router.post("/insert-new-game", async (req, res) => {
     const { gameID, title, genre, releaseDate, platform} = req.body;
     const insertResult = await appService.insertNewGame(gameID, title, genre, releaseDate, platform);
@@ -138,7 +148,6 @@ router.post("/insert-new-game", async (req, res) => {
         res.status(500).json({ success: false });
     }
 });
-
 
 
 
