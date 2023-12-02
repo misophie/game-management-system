@@ -1,0 +1,21 @@
+SELECT pb.PublisherID, pb.publisherName, g.GameID, Title, Genre, releaseDate, platform FROM publisher pb, publishes p, game g WHERE pb.publisherID = p.publisherID AND g.gameID = p.gameID;
+SELECT * FROM publisher pb, publishes p, game g WHERE pb.publisherID = p.publisherID AND g.gameID = p.gameID;
+
+SELECT max(avgDif) FROM (SELECT genre, avg(difficulty) AS avgDif FROM SinglePlayerGame spg INNER JOIN Game ON spg.gameID = Game.gameID GROUP BY Genre)
+
+INSERT INTO Player (playerID, playerEmail, dateOfBirth, rank, avatar, bio) VALUES (200, 'test@email.com', TO_DATE('10-11-2000', 'DD-MM-YYYY'), 0, '/path/to/avatar6.jpg', 'game is life')
+
+- for the delete ON CASCADE, insert game first, then insert singleplayergame, then delete game
+
+INSERT INTO Game (gameID, title, genre, releaseDate, platform, publisherID) VALUES (12, 'test', 'FPS Shooter', TO_DATE ('30-NOV-2023', 'DD-MM-YYYY'), 'PC', 1)
+
+INSERT INTO SinglePlayerGame (gameID, difficulty) VALUES (12, 10)
+
+DELETE FROM Game WHERE title = 'test'
+
+UPDATE Player 
+SET dateOfBirth = TO_DATE('10-11-2001', 'DD-MM-YYYY')
+WHERE playerEmail = 'test@email.com';
+
+DELETE FROM Player
+WHERE playerEmail = 'test@email.com';
