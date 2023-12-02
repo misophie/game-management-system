@@ -76,8 +76,7 @@ async function getAllAttributesOfTable(selectedTable) {
 }
 
 async function projectionQuery(selectedTable, queryAttributes) {
-  // selected table is a string 
-  // queryAttributes is an array 
+
 
   const selectAttributes = queryAttributes.join(', ');
   const query = `SELECT ${selectAttributes} FROM ${selectedTable}`;
@@ -132,7 +131,7 @@ async function getGamePublisher() {
 async function insertNewGame(gameID, title, genre, releaseDate, platform) {
   return await withOracleDB(async (connection) => {
     const result = await connection.execute(
-      `INSERT INTO Game (gameID, title, genre, releaseDate, platform, publisherID) VALUES (:gameID, :title, :genre, :releaseDate, :platform)`,
+      `INSERT INTO Game (gameID, title, genre, releaseDate, platform) VALUES (:gameID, :title, :genre, TO_DATE(:releaseDate, 'DD-MM-YYYY'), :platform)`,
       [gameID, title, genre, releaseDate, platform],
       { autoCommit: true }
     );
@@ -152,29 +151,17 @@ async function countGamestable() {
   });
 }
 
-// async function getAllPublishersGames() {
-//   return await withOracleDB(async (connection) => {
-//     const result = await connection.execute('SELECT pb.PublisherID, pb.publisherName, g.GameID, Title, Genre, releaseDate, platform FROM publisher pb, publishes p, game g WHERE pb.publisherID = p.publisherID AND g.gameID = p.gameID')
-//     // const result = await connection.execute("");
+async function deleteGame(idForDelete) {
+  return await withOracleDB(async (connection) => {
+    console.log(idForDelete)
+    const result = await connection.execute("DELETE FROM Game WHERE gameid=:idForDelete", [idForDelete], {autoCommit: true});
+    console.log(result)
+    return result.rowsAffected;
+  }).catch(() => {
+    return -1;
+  });
+}
 
-//     const rows = result.rows;
-
-//     const publisherGameData = rows.map(row => {
-//         return {
-//             publisherId: row[0],
-//             publisherName: row[1],
-//             gameId: row[2],
-//             title: row[3],
-//             genre: row[4],
-//             releaseDate: row[5],
-//             platform: row[6]
-//         };
-//     });
-//     return publisherGameData;
-//   }).catch(() => {
-//     return [];
-//   });
-// }
 
 async function getGenreStatistic() {
   return await withOracleDB(async (connection) => {
@@ -392,7 +379,6 @@ async function getGenreStatisticDifficulty() {
     });
 }
 
-
 async function countPublishersWithGamestable() {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(`SELECT count(*) FROM publisher pb, publishes p, game g WHERE pb.publisherID = p.publisherID AND g.gameID = p.gameID`);
@@ -462,10 +448,7 @@ module.exports = {
     getGameRatedEforEveryone,
     insertNewGame,
     getAllUser,
-
-    // initiateDemotable, 
-    // insertDemotable, 
-    // updateNameDemotable, 
+    deleteGame,
     countGamestable,
     getAllPublishersGames,
     countPublishersWithGamestable

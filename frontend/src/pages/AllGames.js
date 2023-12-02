@@ -65,6 +65,32 @@ const Info = styled.div`
 `;
 
 
+const InnerContainer = styled.div`
+    display: flex;
+    max-width: 800px; 
+    margin: 0 auto; 
+    padding: 5px;
+    text-align: right; 
+    gap: 30px;
+    align-items: right;
+`
+
+const InputTextBox = styled.input`
+    width = 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none
+`
+
+const AddDeleteContainer = styled.div`
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+
+`
+
 // true = multiplayer
 // false = single-player game
 const GameTitle = ({key, title, img, gameType = false, genre, date, publisher, company}) => {
@@ -93,6 +119,9 @@ export const AllGames = () => {
     const [queryAttributes, setQueryAttributes] = useState([]);
     const [displayAddGame, setDisplayAddGame] = useState(false);
     const [isInfoVisible, setIsInfoVisible] = useState(true);
+    const [idForDelete, setIdForDelete] = useState('');
+    const [success, setSuccess] = useState('');
+    const [error, setError] = useState('');
 
 
     const dropdownOptions = [
@@ -121,18 +150,49 @@ export const AllGames = () => {
         setDisplayAddGame(true)
         setIsInfoVisible(!isInfoVisible)
     }
+
+    const handleDeleteClick = () => {
+        axios.delete("http://localhost:55001/delete-game", {params : {idForDelete}})
+            .then(response => {
+                console.log('DELETE request successful:', response.data);
+                setSuccess('DELETE request successful:');
+            })
+            .catch(error => {
+                console.error('Error making DELETE request:', error);
+                console.log("fhelskfjlkdjflkdsjfklsd")
+                setError('DELETE request failure')
+            });
+    }
+
     return(
     <PageContainer>
         <FilterContainer>
+        Filter Games:
         <Dropdown options={dropdownOptions} onSelect={addAttribute}/>
         You have selected:
         {queryAttributes ? queryAttributes.map(attribute => <Text>{attribute}</Text>) : null}
         </FilterContainer>
-        
-        Filter Games:
+        <AddDeleteContainer>
         <Button onClick={handleClick}>
             Add Game
         </Button>
+
+        <div>
+        <InnerContainer>
+        <InputTextBox
+            type = "text"
+            placeholder="Enter text here"
+            onChange={(e) => setIdForDelete(e.target.value)}/>
+        </InnerContainer>
+
+        <Button onClick={handleDeleteClick}>
+            Delete Game 
+        </Button>
+        {success === '' ? (error === '' ? null : error) : success}
+        </div>
+            
+        </AddDeleteContainer>
+
         {
             displayAddGame ? <Info isVisible={isInfoVisible}><AddGameTuple /></Info> : null
         }

@@ -204,13 +204,15 @@ insert into Game (gameID, title, genre, releaseDate, platform)
 values (9, 'Cyberpunk 2077', 'Action RPG', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'PC');
 insert into Game (gameID, title, genre, releaseDate, platform) 
 values (10, 'Red Dead Redemption 2', 'Action RPG', TO_DATE ('10-OCT-2023', 'DD-MM-YYYY'), 'PlayStation');
-
+insert into Game (gameID, title, genre, releaseDate, platform) 
+values (12, 'test', 'FPS Shooter', TO_DATE ('30-NOV-2023', 'DD-MM-YYYY'), 'PC');
 
 insert into SinglePlayerGame (gameID, difficulty) values (6,  6);
 insert into SinglePlayerGame (gameID, difficulty) values (7,  8);
 insert into SinglePlayerGame (gameID, difficulty) values (8, 10);
 insert into SinglePlayerGame (gameID, difficulty) values (9, 9);
 insert into SinglePlayerGame (gameID, difficulty) values (10, 3);
+insert into SinglePlayerGame (gameID, difficulty) VALUES (12, 10);
 
 
 insert into Server (serverRegion, voiceChatProvider) values ('America-1001', 'Voices');

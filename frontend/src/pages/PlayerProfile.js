@@ -151,7 +151,6 @@ export const PlayerProfile = () => {
     };
 
     
-
     return(
         <PlayerContainer>
             <AvatarLeaderboardContainer>
