@@ -129,6 +129,20 @@ async function getGamePublisher() {
   });
 }
 
+async function insertNewGame(gameID, title, genre, releaseDate, platform) {
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(
+      `INSERT INTO Game (gameID, title, genre, releaseDate, platform, publisherID) VALUES (:gameID, :title, :genre, :releaseDate, :platform)`,
+      [gameID, title, genre, releaseDate, platform],
+      { autoCommit: true }
+    );
+
+    return true;
+  }).catch(() => {
+    return false;
+  });
+}
+
 async function countGamestable() {
   return await withOracleDB(async (connection) => {
     const result = await connection.execute("SELECT Count(*) FROM Game");
@@ -215,6 +229,17 @@ async function countPublishersWithGamestable() {
   });
 }
 
+
+async function getAllUser(email, dob) {
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(`SELECT * FROM Player`);
+    return result.rows;
+
+  }).catch(() => {
+    return false;
+  });
+}
+
 async function insertNewUser(email, dob) {
   return await withOracleDB(async (connection) => {
     usernum = usernum + 1
@@ -223,7 +248,7 @@ async function insertNewUser(email, dob) {
       `INSERT INTO Player (playerID, playerEmail, dateOfBirth, rank, avatar, bio) VALUES (:usernum, :email, TO_DATE(:dob, 'DD-MM-YYYY'), 0, '/path/to/default.jpg', 'Click button to edit here!')`,
       [usernum, email, dob],
       { autoCommit: true }
-    );
+    )
 
     return true;
   }).catch(() => {
@@ -377,6 +402,47 @@ async function countPublishersWithGamestable() {
     });
 }
 
+async function getTitleGameForAllPlayers() {
+  return await withOracleDB(async (connection) => {
+      const result = await connection.execute(`
+            SELECT g.title
+            FROM Game g
+            WHERE NOT EXISTS (
+            SELECT p.playerID
+            FROM Player p
+            MINUS
+            SELECT gp.playerID
+            FROM GamePlayer gp
+            WHERE gp.gameID = g.gameID)`);
+
+      return result.rows;
+  }).catch(() => {
+      return [];
+  });
+}
+
+async function getGameRatedEforEveryone(genreRating) {
+  return await withOracleDB(async (connection) => {
+      const result = await connection.execute(`
+      SELECT ga.title, ga.genre
+      FROM Genre ge
+      JOIN Game ga ON ge.genre = ga.genre
+      WHERE ge.ageRestriction =:genreRating`,
+      [genreRating],
+      {autoCommit: true}
+      );
+
+      return result.rows;
+  }).catch(() => {
+      return [];
+  });
+}
+
+
+
+
+
+
 module.exports = {
     testOracleConnection,
     fetchAllGamesFromDb,
@@ -389,12 +455,14 @@ module.exports = {
     getAllAttributesOfTable,
     projectionQuery,
     getNestedAggregationQuery,
-<<<<<<< Updated upstream
-=======
     getTitleGameForAllPlayers,
     getGameRatedEforEveryone,
     updateUserAvatar,
->>>>>>> Stashed changes
+    getTitleGameForAllPlayers,
+    getGameRatedEforEveryone,
+    insertNewGame,
+    getAllUser,
+
     // initiateDemotable, 
     // insertDemotable, 
     // updateNameDemotable, 

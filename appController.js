@@ -83,6 +83,31 @@ router.get("/current-user", async (req, res) => {
     res.json({data:user});
 });
 
+router.get("/popular-game", async (req, res) => {
+    const user = await appService.getTitleGameForAllPlayers();
+    res.json({data:user});
+});
+
+router.get("/everyone-game", async (req, res) => {
+    try {
+        const { genreRating } = req.query;
+        if (genreRating === 'T' || genreRating === 'A' || genreRating === 'E') {
+            const user = await appService.getGameRatedEforEveryone(genreRating);
+            return res.json({ data: user });
+        }
+        return res.status(400).json({ error: 'Missing genreRating parameter' });
+        
+    } catch (error) {
+        console.error('Error in /everyone-game route:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+router.get("/all-users", async (req, res) => {
+    const user = await appService.getAllUser()
+    res.json({data:user});
+});
+
 // POST REQUESTS 
 router.post("/insert-new-user", async (req, res) => {
     const { email, dob } = req.body;
@@ -109,11 +134,20 @@ router.post("/update-user-avatar", async (req, res) => {
     const updateResult = await appService.updateUserAvatar(avatar, email);
     if (updateResult) {
         res.json({ success: updateResult});
-    } else {
+     } else {
         res.status(500).json({ success: false });
     }
 });
 
+router.post("/insert-new-game", async (req, res) => {
+    const { gameID, title, genre, releaseDate, platform} = req.body;
+    const insertResult = await appService.insertNewGame(gameID, title, genre, releaseDate, platform);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
 
 
 

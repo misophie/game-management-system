@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState} from "react";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import DummyImage from "../images/300.png";
@@ -103,7 +103,6 @@ export const PlayerProfile = () => {
     
     const { userInfo } = profileData;
     const email = userInfo[0][1];
-
 
     // handler functions
     const handleEditClick = () => {

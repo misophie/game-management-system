@@ -321,8 +321,18 @@ insert into GamePlayer (playerID, gameID) values (1, 1);
 insert into GamePlayer (playerID, gameID) values (2, 1);
 insert into GamePlayer (playerID, gameID) values (3, 1);
 insert into GamePlayer (playerID, gameID) values (4, 1);
-insert into GamePlayer (playerID, gameID) values (5, 1);
 
+-- Add tuples such that player 5 plays all games
+insert into GamePlayer (playerID, gameID) values (5, 1);
+insert into GamePlayer (playerID, gameID) values (5, 2);
+insert into GamePlayer (playerID, gameID) values (5, 3);
+insert into GamePlayer (playerID, gameID) values (5, 4);
+insert into GamePlayer (playerID, gameID) values (5, 5);
+insert into GamePlayer (playerID, gameID) values (5, 6);
+insert into GamePlayer (playerID, gameID) values (5, 7);
+insert into GamePlayer (playerID, gameID) values (5, 8);
+insert into GamePlayer (playerID, gameID) values (5, 9);
+insert into GamePlayer (playerID, gameID) values (5, 10);
 
 insert into Friend (playerID1, playerID2) values (1, 2);
 insert into Friend (playerID1, playerID2) values (2, 3);
