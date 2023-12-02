@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
+import { sanitizeHTML } from "../functions";
 
 const PageButton = styled.button`
   background-color: #007bff;
@@ -54,6 +55,32 @@ const LeftAlignedContainer = styled.div`
   gap: 30px;
 `;
 
+const InnerContainer = styled.div`
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    overflow-x: auto;
+    justify-content: center;
+    padding-bottom: 0.5%
+    align-items: center;
+`
+
+const Text = styled.text`
+    font.size: 16px;
+    color: #333;
+    font-weight: bold
+`
+
+const InputTextBox = styled.input`
+    width = 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none
+`
+
+
 const Info = styled.div`
   display: ${props => (props.isVisible ? 'flex' : 'none')};
   gap: 20px;
@@ -95,6 +122,8 @@ const AllGamesStatistic = ({genreTitle, genreNumber}) => {
 
 export const Statistics = () => {
     const [genreData, setGenreData] = useState('');
+    const [genreRating, setGenreRating] = useState('');
+    const [error, setError] = useState(false);
     const [nestedData, setNestedData] = useState([]);
     const [havingData, setHavingData] = useState([]);
     const [popularGameData, setPopularGameData] = useState([]);
@@ -143,27 +172,41 @@ export const Statistics = () => {
 
     const handleGameForEQuery = () => {
         // Fetch data from Express backend
-        axios.get('http://localhost:55001/everyone-game')
+        const cleanGenre = sanitizeHTML(genreRating)
+
+        axios.get('http://localhost:55001/everyone-game', {params: {genreRating : cleanGenre}})
         .then(response => setEveryoneGameData(response.data["data"]))
-        .catch(error => console.error('Error fetching data:', error))
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            setError(error);
+           
+        })
         setisInfoVisibleE(!isInfoVisibleE)
+        setEveryoneGameData([])
+        setError(false)
     }
     
 
     console.log(genreData);
     return(
     <PageContainer>
-        {console.log(setNestedData)}
-
         <Heading>
             Statistics
         </Heading>
 
         <LeftAlignedContainer>
         <AllStatisticsContainer>
+            <InnerContainer>
+                <Text>Enter Rating:</Text>
+                <InputTextBox
+                    type = "text"
+                    placeholder="Enter T, A, E"
+                    onChange={(e) => setGenreRating(e.target.value)}/>
+            </InnerContainer>
             <PageButton onClick={handleGameForEQuery}>
-            Games for Everyone
+            Games with Specified Rating
             </PageButton>
+            
             <InfoGenreE isVisible={isInfoVisibleE}>
             {Array.isArray(everyoneGameData) ? (
                     everyoneGameData.map(genre => (
@@ -176,8 +219,10 @@ export const Statistics = () => {
             ) : null}
 
             </InfoGenreE>
+         
             
             </AllStatisticsContainer>
+            {isInfoVisibleE && error ? "Ensuring you are inputting an availabe input: T, E, A" : null}
         <AllStatisticsContainer>
             <PageButton onClick={handleTopGameQuery}>
             Game that All Users Play
