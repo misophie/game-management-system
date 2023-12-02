@@ -61,6 +61,7 @@ export const AddGameTuple = () => {
     const [releaseDate, setReleaseDate] = useState('');
     const [platform, setPlatform] = useState('');
     const [success, setSuccess] = useState(null);
+    const [error, setError] = useState(false);
     
 
     const handleClick = () => {
@@ -82,7 +83,10 @@ export const AddGameTuple = () => {
                   setSuccess(response)
                   console.log(response)
             })
-            .catch(error => console.error('Error fetching data:', error));
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                setError(true);
+            });
     }
 
 
@@ -126,8 +130,11 @@ export const AddGameTuple = () => {
             </InnerContainer>
 
             <SignInButton onClick={handleClick}>Add Game</SignInButton>
-            {console.log(setSuccess)}
-            { success === null ? null : (success ? "Success" : "Failure") }
+            {console.log(success)}
+            {console.log("producing the error")}
+            {console.log(error)}
+
+            { success === null ? (error ? "Failure. Duplicate Game ID or incorrect date formation." : null) : (success ? "Success. Check the tuple in Query Available Game Tables." : "Failure. Duplicate Game ID or incorrect date formation.") }
         </PageContainer>
     )
 }
