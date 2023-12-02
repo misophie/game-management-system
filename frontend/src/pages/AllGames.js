@@ -4,6 +4,7 @@ import styled from "styled-components";
 import DummyImage from "../images/300.png";
 import axios from "axios";
 import { Dropdown } from "../components/DropdownComponent";
+import { AddGameTuple } from "../components/AddGameTuple";
 
 const PageContainer = styled.div`
   display: flex;
@@ -48,6 +49,22 @@ const GameImageContainer = styled.div`
     flex-direction: column;
     cursor: pointer;
 `
+
+const Button = styled.button`
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+`;
+
+const Info = styled.div`
+  display: ${props => (props.isVisible ? 'flex' : 'none')};
+  gap: 20px;
+`;
+
+
 // true = multiplayer
 // false = single-player game
 const GameTitle = ({key, title, img, gameType = false, genre, date, publisher, company}) => {
@@ -74,6 +91,9 @@ export const AllGames = () => {
     const [data, setData] = useState('');
     const [selectedOption, setSelectedOption] = useState('');
     const [queryAttributes, setQueryAttributes] = useState([]);
+    const [displayAddGame, setDisplayAddGame] = useState(false);
+    const [isInfoVisible, setIsInfoVisible] = useState(true);
+
 
     const dropdownOptions = [
         { value: 1, label: 'Adventure RPG' },
@@ -97,7 +117,10 @@ export const AllGames = () => {
 
       
 
-    
+    const handleClick = () => {
+        setDisplayAddGame(true)
+        setIsInfoVisible(!isInfoVisible)
+    }
     return(
     <PageContainer>
         <FilterContainer>
@@ -106,6 +129,13 @@ export const AllGames = () => {
         {queryAttributes ? queryAttributes.map(attribute => <Text>{attribute}</Text>) : null}
         </FilterContainer>
         
+        Filter Games:
+        <Button onClick={handleClick}>
+            Add Game
+        </Button>
+        {
+            displayAddGame ? <Info isVisible={isInfoVisible}><AddGameTuple /></Info> : null
+        }
        
             <AllGameContainer>
             {Array.isArray(data) ? (

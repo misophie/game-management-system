@@ -129,6 +129,20 @@ async function getGamePublisher() {
   });
 }
 
+async function insertNewGame(gameID, title, genre, releaseDate, platform) {
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(
+      `INSERT INTO Game (gameID, title, genre, releaseDate, platform, publisherID) VALUES (:gameID, :title, :genre, :releaseDate, :platform)`,
+      [gameID, title, genre, releaseDate, platform],
+      { autoCommit: true }
+    );
+
+    return true;
+  }).catch(() => {
+    return false;
+  });
+}
+
 async function countGamestable() {
   return await withOracleDB(async (connection) => {
     const result = await connection.execute("SELECT Count(*) FROM Game");
@@ -212,6 +226,17 @@ async function countPublishersWithGamestable() {
     return result.rows[0][0];
   }).catch(() => {
     return -1;
+  });
+}
+
+
+async function getAllUser(email, dob) {
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(`SELECT * FROM Player`);
+    return result.rows;
+
+  }).catch(() => {
+    return false;
   });
 }
 
@@ -415,6 +440,8 @@ module.exports = {
     getNestedAggregationQuery,
     getTitleGameForAllPlayers,
     getGameRatedEforEveryone,
+    insertNewGame,
+    getAllUser,
     // initiateDemotable, 
     // insertDemotable, 
     // updateNameDemotable, 
