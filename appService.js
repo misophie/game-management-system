@@ -223,7 +223,7 @@ async function insertNewUser(email, dob) {
       `INSERT INTO Player (playerID, playerEmail, dateOfBirth, rank, avatar, bio) VALUES (:usernum, :email, TO_DATE(:dob, 'DD-MM-YYYY'), 0, '/path/to/default.jpg', 'Click button to edit here!')`,
       [usernum, email, dob],
       { autoCommit: true }
-    );
+    )
 
     return true;
   }).catch(() => {
@@ -360,6 +360,44 @@ async function countPublishersWithGamestable() {
     });
 }
 
+async function getTitleGameForAllPlayers() {
+  return await withOracleDB(async (connection) => {
+      const result = await connection.execute(`
+            SELECT g.title
+            FROM Game g
+            WHERE NOT EXISTS (
+            SELECT p.playerID
+            FROM Player p
+            MINUS
+            SELECT gp.playerID
+            FROM GamePlayer gp
+            WHERE gp.gameID = g.gameID)`);
+
+      return result.rows;
+  }).catch(() => {
+      return [];
+  });
+}
+
+async function getGameRatedEforEveryone() {
+  return await withOracleDB(async (connection) => {
+      const result = await connection.execute(`
+      SELECT ga.title, ga.genre
+      FROM Genre ge
+      JOIN Game ga ON ge.genre = ga.genre
+      WHERE ge.ageRestriction = 'E'`);
+
+      return result.rows;
+  }).catch(() => {
+      return [];
+  });
+}
+
+
+
+
+
+
 module.exports = {
     testOracleConnection,
     fetchAllGamesFromDb,
@@ -372,6 +410,8 @@ module.exports = {
     getAllAttributesOfTable,
     projectionQuery,
     getNestedAggregationQuery,
+    getTitleGameForAllPlayers,
+    getGameRatedEforEveryone,
     // initiateDemotable, 
     // insertDemotable, 
     // updateNameDemotable, 

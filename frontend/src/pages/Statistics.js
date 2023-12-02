@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate  } from "react-router-dom";
 import styled from "styled-components";
-import DummyImage from "../images/300.png";
 import axios from "axios";
-import { Dropdown } from "../components/DropdownComponent";
-import { Projection } from "../components/Projection";
 
 const PageButton = styled.button`
   background-color: #007bff;
@@ -52,7 +48,6 @@ const StatisticContainer = styled.div`
 const LeftAlignedContainer = styled.div`
   display: flex;
   flex-direction: column;
-  max-width: 800px; 
   margin: 0 auto; 
   padding: 20px;
   text-align: left; 
@@ -74,6 +69,17 @@ const InfoGenreNested = styled.div`
   gap: 20px;
 `;
 
+const InfoGenrePopular = styled.div`
+  display: ${props => (props.isVisible ? 'flex' : 'none')};
+  gap: 20px;
+`;
+
+const InfoGenreE = styled.div`
+  display: ${props => (props.isVisible ? 'flex' : 'none')};
+  gap: 20px;
+`;
+
+
 
 
 const AllGamesStatistic = ({genreTitle, genreNumber}) => {
@@ -91,9 +97,14 @@ export const Statistics = () => {
     const [genreData, setGenreData] = useState('');
     const [nestedData, setNestedData] = useState([]);
     const [havingData, setHavingData] = useState([]);
+    const [popularGameData, setPopularGameData] = useState([]);
+    const [everyoneGameData, setEveryoneGameData] = useState([]);
     const [isInfoVisible, setIsInfoVisible] = useState(true);
     const [isInfoVisibleStatistic, setisInfoVisibleStatistic] = useState(true);
     const [isInfoVisibleAggregated, setisInfoVisibleAggregated] = useState(true);
+    const [isInfoVisiblePopular, setisInfoVisiblePopular] = useState(true);
+    const [isInfoVisibleE, setisInfoVisibleE] = useState(true);
+
 
 
     const handleGenreQuery = () => {
@@ -121,6 +132,24 @@ export const Statistics = () => {
 
     }
 
+    const handleTopGameQuery = () => {
+    // Fetch data from Express backend
+    axios.get('http://localhost:55001/popular-game')
+    .then(response => setPopularGameData(response.data["data"]))
+    .catch(error => console.error('Error fetching data:', error))
+    setisInfoVisiblePopular(!isInfoVisiblePopular)
+
+    }
+
+    const handleGameForEQuery = () => {
+        // Fetch data from Express backend
+        axios.get('http://localhost:55001/everyone-game')
+        .then(response => setEveryoneGameData(response.data["data"]))
+        .catch(error => console.error('Error fetching data:', error))
+        setisInfoVisibleE(!isInfoVisibleE)
+    }
+    
+
     console.log(genreData);
     return(
     <PageContainer>
@@ -132,6 +161,34 @@ export const Statistics = () => {
 
         <LeftAlignedContainer>
         <AllStatisticsContainer>
+            <PageButton onClick={handleGameForEQuery}>
+            Games for Everyone
+            </PageButton>
+            <InfoGenreE isVisible={isInfoVisibleE}>
+            {Array.isArray(everyoneGameData) ? (
+                    everyoneGameData.map(genre => (
+                        <AllGamesStatistic
+                            genreTitle={genre[0]}
+                            genreNumber={genre[1]}
+                        />
+    
+                    ))
+            ) : null}
+
+            </InfoGenreE>
+            
+            </AllStatisticsContainer>
+        <AllStatisticsContainer>
+            <PageButton onClick={handleTopGameQuery}>
+            Game that All Users Play
+            </PageButton>
+            <InfoGenrePopular isVisible={isInfoVisiblePopular}>
+                {popularGameData ? popularGameData : null}
+
+            </InfoGenrePopular>
+            
+            </AllStatisticsContainer> 
+            <AllStatisticsContainer>
             <PageButton onClick={handleAggregationQuery}>
             Highest average single player game difficulty for all Genres
             </PageButton>
