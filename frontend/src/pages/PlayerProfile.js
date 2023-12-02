@@ -83,8 +83,11 @@ const PageButton = styled.button`
 export const PlayerProfile = () => {
 
     const [editable, setEditable] = useState(false);
+    const [avatarEditable, setAvatarEditable] = useState(false);
+    const [avatarText, setAvatarText] = useState('Click the button to edit me!');
     const [text, setText] = useState('Click the button to edit me!');
     const [data, setData] = useState('');
+    const [avatarData, setAvatarData] = useState('');
 
     // To find passed in information about which user has logged in
     const location = useLocation();
@@ -107,6 +110,11 @@ export const PlayerProfile = () => {
         setEditable(!editable);
     };
 
+    // handler functions
+    const handleEditAvatarClick = () => {
+        setAvatarEditable(!avatarEditable);
+    };
+
     const handleSave = (editedText) => {
         setText(editedText);
         setEditable(false);
@@ -120,6 +128,24 @@ export const PlayerProfile = () => {
         .then(response => {
         // Assuming the response contains the updated data
         setData(response.data.success.rows[0]);
+        })
+        .catch(error => console.error('Error fetching data:', error));
+
+    };
+
+    const handleSaveAvatar = (editedText) => {
+        setAvatarText(editedText);
+        setEditable(false);
+
+        const userInfo =  {
+            avatar: sanitizeHTML(editedText),
+            email: email
+        }
+
+        axios.post('http://localhost:55001/update-user-avatar', userInfo)
+        .then(response => {
+        // Assuming the response contains the updated data
+        setAvatarData(response.data.success.rows[0]);
         })
         .catch(error => console.error('Error fetching data:', error));
 
@@ -139,15 +165,18 @@ export const PlayerProfile = () => {
                 Email: {userInfo[0][1]}
                 </Text>
                 <Text>
+                Avatar: <EditableText text={avatarText} isEditable={avatarEditable} onEdit={handleEditAvatarClick} onSave={handleSaveAvatar} />               
+                </Text>
+                <PageButton onClick={handleEditAvatarClick}>Edit button </PageButton>
+                {avatarData && editable !== true ? "Success! Your old avatar was: " + avatarData + ". You can verify changes in the Query Available Game Tables." : null}
+
+                <Text>
                 Bio:<EditableText text={text} isEditable={editable} onEdit={handleEditClick} onSave={handleSave} />
                 </Text>
                 <PageButton onClick={handleEditClick}>Edit button </PageButton>
-                {data && editable !== true ? "Success! Your old bio was: " + data : null}
+                {data && editable !== true ? "Success! Your old bio was: " + data + ". You can verify changes in the Query Available Game Tables." : null}
                 
-                
-                <Text>
-                
-                </Text>
+            
                 <AllFriendContainer>
                 <Text>
                     Friends

@@ -266,6 +266,23 @@ async function updateUser(newBio, email) {
   });
 }
 
+async function updateUserAvatar(newAvatar, email) {
+  return await withOracleDB(async (connection) => {
+
+    const oldAvatar = await connection.execute('select avatar from player where playerEmail=:email', [email], {autoCommit: true});
+
+    const result = await connection.execute(
+      `UPDATE Player SET avatar=:newAvatar WHERE playerEmail=:email`,
+      [newAvatar, email],
+      { autoCommit: true }
+    );
+
+    return oldAvatar;
+  }).catch(() => {
+    return false;
+  });
+}
+
 async function currentUser(email) {
   return await withOracleDB(async (connection) => {
     const result = await connection.execute(
@@ -372,6 +389,12 @@ module.exports = {
     getAllAttributesOfTable,
     projectionQuery,
     getNestedAggregationQuery,
+<<<<<<< Updated upstream
+=======
+    getTitleGameForAllPlayers,
+    getGameRatedEforEveryone,
+    updateUserAvatar,
+>>>>>>> Stashed changes
     // initiateDemotable, 
     // insertDemotable, 
     // updateNameDemotable, 
